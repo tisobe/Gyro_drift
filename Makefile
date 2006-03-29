@@ -7,7 +7,6 @@ include /data/mta/MTA/include/Makefile.MTA
 
 BIN  = gyro_drift_wrap_script gyro_drift_run_script gyro_drift_detail.perl gyro_drift_sigma_plot.perl gyro_drift_create_fig_html.perl
 DOC  = README
-DATA = col_list2004
 
 install:
 ifdef BIN
