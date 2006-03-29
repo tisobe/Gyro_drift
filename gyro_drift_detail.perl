@@ -18,13 +18,12 @@ use PGPLOT;
 
 $bin_dir    = '/data/mta/MTA/bin/';
 $data_dir   = '/data/mta/MTA/data/';
-#$web_dir    = '/data/mta/www/mta_grat/Gyro/';
-$web_dir    = './';
-$result_dir = './Result_dir/';
-$fig_out    = './';
-$fig_dir    = './Fig_save/';
-$fits_dir   = './Fits_dir';
-$data_save  = './Data';
+$web_dir    = '/data/mta/www/mta_grat/Gyro/';
+$result_dir = '/data/mta/www/mta_grat/Gyro/Result_dir/';
+$fig_out    = $web_dir;
+$fig_dir    = '/data/mta/www/mta_grat/Gyro/Fig_save/';
+$fits_dir   = '/data/mta/Script/Grating/Test/Gyro/Fits_dir';
+$data_save  = '/data/mta/Script/Grating/Test/Gyro/Data';
 
 #
 #--- and other settings
