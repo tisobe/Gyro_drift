@@ -3,7 +3,7 @@ use PGPLOT;
 
 #########################################################################################
 #											#
-#	gyro_drift_detail.perl: plot gyro drift rate around SIM moves			#
+#	gyro_drift_detail.perl: plot gyro drift rate around grating moves		#
 #											#
 #	author: t. isobe (tisobe@cfa.harvard.edu)					#
 #											#
@@ -377,7 +377,7 @@ for($i = 0; $i < $ocnt; $i++){
 #--- and pavg3/pstd3 are after the grating move. these data will be used for another
 #--- analysis later
 #
-	open(OUT, ">>$result_dir/gyro_bias_hist_roll");
+	open(OUT, ">>$result_dir/gyro_drift_hist_roll");
 	print OUT "$mid_time\t$pavg1+/-$pstd1\t$pavg2+/-$pstd2\t$pavg3+/-$pstd3\t$grat[$i]\t$ind[$i]\t$mdiff\n";
 	close(OUT);
 
@@ -425,7 +425,7 @@ for($i = 0; $i < $ocnt; $i++){
 	@lybin = @y_diff;
 
 	plot_fig2();
-	open(OUT, ">>$result_dir/gyro_bias_hist_pitch");
+	open(OUT, ">>$result_dir/gyro_drift_hist_pitch");
 	print OUT "$mid_time\t$pavg1+/-$pstd1\t$pavg2+/-$pstd2\t$pavg3+/-$pstd3\t$grat[$i]\t$ind[$i]\t$mdiff\n";
 	close(OUT);
 #
@@ -476,7 +476,7 @@ for($i = 0; $i < $ocnt; $i++){
 	plot_fig2();
 	$lybot = $lymin - 0.15 * $lydiff;
 	pgptext($lxmid, $lybot, 0.0,0.5, "Time (Sec)");
-	open(OUT, ">>$result_dir/gyro_bias_hist_yaw");
+	open(OUT, ">>$result_dir/gyro_drift_hist_yaw");
 	print OUT "$mid_time\t$pavg1+/-$pstd1\t$pavg2+/-$pstd2\t$pavg3+/-$pstd3\t$grat[$i]\t$ind[$i]\t$mdiff\n";
 	close(OUT);
 
