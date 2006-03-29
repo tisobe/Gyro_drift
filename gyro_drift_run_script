@@ -1,0 +1,24 @@
+setascds
+
+perl /data/mta/MTA/bin/gyro_drift_detail.perl
+
+perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_roll HETG INSR
+perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_roll HETG RETR
+perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_roll LETG INSR
+perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_roll LETG RETR
+
+perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_pitch HETG INSR
+perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_pitch HETG RETR
+perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_pitch LETG INSR
+perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_pitch LETG RETR
+
+perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw HETG INSR
+perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw HETG RETR
+perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw LETG INSR
+perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw LETG RETR
+
+perl /data/mta/MTA/bin/gyro_drift_create_fig_html.perl HETG INSR
+perl /data/mta/MTA/bin/gyro_drift_create_fig_html.perl HETG RETR
+
+perl /data/mta/MTA/bin/gyro_drift_create_fig_html.perl LETG INSR
+perl /data/mta/MTA/bin/gyro_drift_create_fig_html.perl LETG RETR
