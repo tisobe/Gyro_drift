@@ -99,7 +99,10 @@ foreach $ent (@list){
 	chomp $ent;
 	@atemp = split(/\.gif/, $ent);
 	$name = $atemp[0];
-	$html_name = "$name".'.html';
+	@btemp = split(/www/, $atemp[0]);
+	$name2 = $btemp[1];
+	$html_name  = "$name".'.html';
+	$html_name2 = 'http://cxc.harvard.edu/mta_days/'."$name2".'.html';
 
 	if($ent =~ /\//){
 		@btemp = split(/\//, $ent);
@@ -149,7 +152,7 @@ foreach $ent (@list){
 #	
 	open(OUT2, ">>$web_dir/$main_html");
 	print OUT2 '<tr><td>',"$year",'</td><td>',"$yday",'</td><td>';
-	print OUT2 '<a href="',"$html_name",'", target=blank>Plot</a></td></tr>',"\n";
+	print OUT2 '<a href="',"$html_name2",'", target=blank>Plot</a></td></tr>',"\n";
 	close(OUT2);
 }
 
