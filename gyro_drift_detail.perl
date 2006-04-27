@@ -296,7 +296,11 @@ for($i = 0; $i < $ocnt; $i++){
 
 	@lxbin = @lcstime;
 	$lxdiff = $lzs2 - $lzs1;
-	$ltot  = $lccnt;
+#
+#--- 	I do not know why, but I need to stop one before the last data point to get
+#---    a right answer...
+#
+	$ltot  = $lccnt - 1;
 	$lymin = -10;
 	$lymax =  10;
 
@@ -307,7 +311,7 @@ for($i = 0; $i < $ocnt; $i++){
 #
 	open(OUT,"> $data_save/$out_data");
 	for($jk = 0; $jk < $ccnt; $jk++){
-		print OUT "$ctime[$jk]\t$aogbias1[$jk]\t$aogbias2[$jk]\taogbias3[$jk]\n";
+		print OUT "$cstime[$jk]\t$aogbias1[$jk]\t$aogbias2[$jk]\t$aogbias3[$jk]\n";
 	}
 	close(OUT);
 	system("gzip $data_save/$out_data");

@@ -125,15 +125,20 @@ print OUT2 'are plotted on the right side panels.',"\n";
 print OUT2 '</P><br>',"\n";
 print OUT2 '<table border=1 cellspacing=2 cellpadding=2>',"\n";
 print OUT2 '<tr><th rowspan=2>Year</th><th rowspan=2>Year Date</th><th rowspan=2>Plot</th>',"\n";
-print OUT2 '<th colspan=3>Pitch</th><th colspan=3>Roll</th><th colspan=3>Yaw</th></tr>',"\n";
+print OUT2 '<th colspan=6>Pitch</th><th colspan=6>Roll</th><th colspan=6>Yaw</th></tr>',"\n";
 #print OUT2 '<th>&#160</th><th>&#160</th><th>&#160</th>';
 print OUT2 '<th>Before</th><th>During</th><th>After</th>';
+print OUT2 '<th>Before/During</th><th>After/During</th><th>Before/After</th>';
 print OUT2 '<th>Before</th><th>During</th><th>After</th>';
-print OUT2 '<th>Before</th><th>During</th><th>After</th>',"\n";
+print OUT2 '<th>Before/During</th><th>After/During</th><th>Before/After</th>';
+print OUT2 '<th>Before</th><th>During</th><th>After</th>';
+print OUT2 '<th>Before/During</th><th>After/During</th><th>Before/After</th>';
+print OUT2 "\n";
 close(OUT2);
 
 $pos = 0;
 
+OUTER2:
 foreach $ent (@list){
 	chomp $ent;
 	@atemp = split(/\.gif/, $ent);
@@ -196,18 +201,79 @@ foreach $ent (@list){
 			last OUTER;
 		}
 	}
+
+	if($pt_md[$pos] == 0){
+		$pt_r1 = 0;
+		$pt_f2 = 0;
+	}else{
+		$pt_r1 = abs($pt_bf[$pos]/$pt_md[$pos]);
+		$pt_r2 = abs($pt_af[$pos]/$pt_md[$pos]);
+	}
+	if($pt_af[$pos] == 0){
+		$pt_r3 = 0;
+	}else{
+		$pt_r3 = abs($pt_bf[$pos]/$pt_af[$pos]);
+	}
+
+	if($rl_md[$pos] == 0){
+		$rl_r1 = 0;
+		$rl_f2 = 0;
+	}else{
+		$rl_r1 = abs($rl_bf[$pos]/$rl_md[$pos]);
+		$rl_r2 = abs($rl_af[$pos]/$rl_md[$pos]);
+	}
+	if($rl_af[$pos] == 0){
+		$rl_r3 = 0;
+	}else{
+		$rl_r3 = abs($rl_bf[$pos]/$rl_af[$pos]);
+	}
+
+	if($yw_md[$pos] == 0){
+		$yw_r1 = 0;
+		$yw_f2 = 0;
+	}else{
+		$yw_r1 = abs($yw_bf[$pos]/$yw_md[$pos]);
+		$yw_r2 = abs($yw_af[$pos]/$yw_md[$pos]);
+	}
+	if($yw_af[$pos] == 0){
+		$yw_r3 = 0;
+	}else{
+		$yw_r3 = abs($yw_bf[$pos]/$yw_af[$pos]);
+	}
+
+	if($pt_bf[$pos] > 30 || $pt_md[$pos] > 30 || $pt_af[$pos] > 30
+			|| $rl_bf[$pos] > 30 || $rl_md[$pos] > 30 || $rl_af[$pos] > 30
+			|| $yw_bf[$pos] > 30 || $yw_md[$pos] > 30 || $yw_af[$pos] > 30){
+		next OUTER2;
+	}
 	open(OUT2, ">>$web_dir/$main_html");
 	print OUT2 '<tr><th>',"$year",'</th><th>',"$yday",'</th><td>';
 	print OUT2 '<a href="',"$html_name2",'", target=blank>Plot</a></td>';
+
 	print OUT2 '<td align=right>',"$pt_bf[$pos]",'</td>';
 	print OUT2 '<td align=right>',"$pt_md[$pos]",'</td>';
 	print OUT2 '<td align=right>',"$pt_af[$pos]",'</td>';
+
+	printf OUT2 "<td align=center>%2.3f</td>",$pt_r1;
+	printf OUT2 "<td align=center>%2.3f</td>",$pt_r2;
+	printf OUT2 "<td align=center>%2.3f</td>",$pt_r3;
+
 	print OUT2 '<td align=right>',"$rl_bf[$pos]",'</td>';
 	print OUT2 '<td align=right>',"$rl_md[$pos]",'</td>';
 	print OUT2 '<td align=right>',"$rl_af[$pos]",'</td>';
+
+	printf OUT2 "<td align=center>%2.3f</td>",$rl_r1;
+	printf OUT2 "<td align=center>%2.3f</td>",$rl_r2;
+	printf OUT2 "<td align=center>%2.3f</td>",$rl_r3;
+
 	print OUT2 '<td align=right>',"$yw_bf[$pos]",'</td>';
 	print OUT2 '<td align=right>',"$yw_md[$pos]",'</td>';
 	print OUT2 '<td align=right>',"$yw_af[$pos]",'</td>';
+
+	printf OUT2 "<td align=center>%2.3f</td>",$yw_r1;
+	printf OUT2 "<td align=center>%2.3f</td>",$yw_r2;
+	printf OUT2 "<td align=center>%2.3f</td>",$yw_r3;
+
 	print OUT2 '</tr>',"\n";
 	close(OUT2);
 }
