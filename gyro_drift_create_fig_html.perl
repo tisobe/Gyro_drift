@@ -247,4 +247,4 @@ foreach $ent (@save_line){
 }
 close(OUT);
 
-system("rm data_out dir_list");
+system("rm data_out");
