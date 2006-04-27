@@ -5,7 +5,7 @@ TASK = Gyro_drift
 
 include /data/mta/MTA/include/Makefile.MTA
 
-BIN  = gyro_drift_wrap_script gyro_drift_run_script gyro_drift_detail.perl gyro_drift_sigma_plot.perl gyro_drift_create_fig_html.perl
+BIN  = gyro_drift_wrap_script gyro_drift_run_script gyro_drift_detail.perl gyro_drift_sigma_plot.perl gyro_drift_create_fig_html.perl gyro_drift_prep_data_html.perl gyro_drift_print_gyro_html.perl
 DOC  = README
 
 install:

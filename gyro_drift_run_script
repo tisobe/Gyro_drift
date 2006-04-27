@@ -21,8 +21,14 @@ perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw HETG RETR
 perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw LETG INSR
 perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw LETG RETR
 
+perl /data/mta/MTA/bin/gyro_drift_prep_data_html.perl
+
+perl /data/mta/MTA/bin/gyro_drift_print_gyro_html.perl
+
 perl /data/mta/MTA/bin/gyro_drift_create_fig_html.perl HETG INSR
 perl /data/mta/MTA/bin/gyro_drift_create_fig_html.perl HETG RETR
 
 perl /data/mta/MTA/bin/gyro_drift_create_fig_html.perl LETG INSR
 perl /data/mta/MTA/bin/gyro_drift_create_fig_html.perl LETG RETR
+
+rm HETG_INSR HETG_RETR LETG_INSR LETG_RETR slope*

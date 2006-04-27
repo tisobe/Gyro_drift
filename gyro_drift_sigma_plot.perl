@@ -8,9 +8,9 @@ use PGPLOT;
 #										#
 #	author: t. isobe (tisobe@cfa.harvard.edu)				#
 #										#
-#	last update:	MAr 28, 2006						#
+#	last update:	Apr 26, 2006						#
 #										#
-#---usage: perl plot_gyro_sigma.perl  gyro_drift_hist_roll HETG INSR		#
+#---usage: perl plot_gyro_sigma.perl  gyro_drift_hist_before HETG INSR		#
 #										#
 #################################################################################
 
@@ -42,13 +42,27 @@ $ind  = $ARGV[2];		# INSR or RETR
 chomp $file;
 chomp $inst;
 chomp $ind;
+#
+#--- we need fitted slope values in the other script; prepare an output file name
+#
+if($file =~ /pitch/){
+	$move = 'pitch';
+}
+if($file =~ /roll/){
+	$move = 'roll';
+}
+if($file =~ /yaw/){
+	$move = 'yaw';
+}
+$slope_file = 'slope_'."$inst".'_'."$ind".'_'."$move";;
+system("rm $slope_file");
 
 open(FH, "$result_dir/$file");
 
 @time   = ();
-@roll   = ();
-@pitch  = ();
-@yaw    = ();
+@before = ();
+@during = ();
+@after  = ();
 @ratio1 = ();
 @ratio2 = ();
 @ratio3 = ();
@@ -62,15 +76,15 @@ while(<FH>){
 		push(@time, $dom);
 		@btemp = split(/\-/, $atemp[1]);
 		$sig1 = $btemp[1];
-		push(@roll, $sig1);
+		push(@before, $sig1);
 		@btemp = split(/\-/, $atemp[2]);
 		$sig2 = $btemp[1];
-		push(@pitch, $sig2);
+		push(@during, $sig2);
 		@btemp = split(/\-/, $atemp[3]);
 		$sig3 = $btemp[1];
-		push(@yaw, $sig3);
+		push(@after, $sig3);
 #
-#---- remit std range between 0 and 5
+#---- limit std range between 0 and 5
 #
 		if($sig2 <= 0 || $sig1 > 5 || $sig2 > 5){
 			$rat1 = 0.0;
@@ -130,11 +144,11 @@ $color = 1;
 $symbol = 2;
 
 #
-#--- roll
+#--- before
 #
 pgsvp(0.08, 1.0, 0.85, 1.00);
 
-@temp = sort{$a<=>$b} @roll;
+@temp = sort{$a<=>$b} @before;
 $ymin = $temp[0];
 $ymax = $temp[$cnt-1];
 $ydiff = $ymax - $ymin;
@@ -150,18 +164,25 @@ $yin   = $ymax - 0.15 * $ydiff;
 
 pgswin($xmin, $xmax, $ymin, $ymax);
 pgbox(ABCST,0.0 , 0.0, ABCNSTV, 0.0, 0.0);
-@yin = @roll;
-@ydata= @roll;
+@yin = @before;
+@ydata= @before;
 robust_fit();
+#
+#--- print out the slope value
+#
+open(OUT, ">>$slope_file");
+print OUT  "$slope\n";
+close(OUT);
+
 plot_fig();
-pgptext($xin, $yin, 0.0, 0.0, "Before, Slope:$pslope");
+pgptext($xin, $yin, 0.0, 0.0, "Before");
 
 #
-#--- pitch 
+#---  during
 #
 pgsvp(0.08, 1.0, 0.69, 0.84);
 
-@temp = sort{$a<=>$b} @roll;
+@temp = sort{$a<=>$b} @before;
 $ymin = $temp[0];
 $ymax = $temp[$cnt-1];
 $ydiff = $ymax - $ymin;
@@ -176,20 +197,25 @@ $yin   = $ymax - 0.15 * $ydiff;
 
 pgswin($xmin, $xmax, $ymin, $ymax);
 pgbox(ABCST,0.0 , 0.0, ABCNSTV, 0.0, 0.0);
-@yin = @pitch;
-@ydata= @pitch;
+@yin = @during;
+@ydata= @during;
 robust_fit();
+
+open(OUT, ">>$slope_file");
+print OUT "$slope\n";
+close(OUT);
+
 plot_fig();
-pgptext($xin, $yin, 0.0, 0.0, "During, Slope:$pslope");
+pgptext($xin, $yin, 0.0, 0.0, "During");
 pgptext($xside, $ymid, 90.0, 0.5, "Sigma of Gyro Drift Rate");
 
 
 #
-#--- yaw
+#--- after
 #
 pgsvp(0.08, 1.0, 0.53, 0.68);
 
-@temp = sort{$a<=>$b} @roll;
+@temp = sort{$a<=>$b} @before;
 $ymin = $temp[0];
 $ymax = $temp[$cnt-1];
 $ydiff = $ymax - $ymin;
@@ -204,11 +230,16 @@ $yin   = $ymax - 0.15 * $ydiff;
 
 pgswin($xmin, $xmax, $ymin, $ymax);
 pgbox(ABCST,0.0 , 0.0, ABCNSTV, 0.0, 0.0);
-@yin = @yaw;
-@ydata= @yaw;
+@yin = @after;
+@ydata= @after;
 robust_fit();
+
+open(OUT, ">>$slope_file");
+print OUT "$slope\n";
+close(OUT);
+
 plot_fig();
-pgptext($xin, $yin, 0.0, 0.0, "After, Slope:$pslope");
+pgptext($xin, $yin, 0.0, 0.0, "After");
 
 
 #
@@ -216,7 +247,7 @@ pgptext($xin, $yin, 0.0, 0.0, "After, Slope:$pslope");
 #
 pgsvp(0.08, 1.0, 0.37, 0.52);
 
-@temp = sort{$a<=>$b} @roll;
+@temp = sort{$a<=>$b} @before;
 $ymin = $temp[0];
 $ymax = $temp[$cnt-1];
 $ydiff = $ymax - $ymin;
@@ -236,8 +267,13 @@ pgbox(ABCST,0.0 , 0.0, ABCLNSTV, 0.0, 0.0);
 @ydata= @ratio1;
 #robust_fit2();
 robust_fit();
+
+open(OUT, ">>$slope_file");
+print OUT "$slope\n";
+close(OUT);
+
 plot_fig2();
-pgptext($xin, $yin, 0.0, 0.0, "Before/During, Slope:$pslope");
+pgptext($xin, $yin, 0.0, 0.0, "Before/During");
 
 
 #
@@ -245,7 +281,7 @@ pgptext($xin, $yin, 0.0, 0.0, "Before/During, Slope:$pslope");
 #
 pgsvp(0.08, 1.0, 0.21, 0.36);
 
-@temp = sort{$a<=>$b} @roll;
+@temp = sort{$a<=>$b} @before;
 $ymin = $temp[0];
 $ymin  = 0.0;
 $ymax = $temp[$cnt-1];
@@ -272,8 +308,13 @@ pgbox(ABCST,0.0 , 0.0, ABCLNSTV, 0.0, 0.0);
 @ydata= @ratio2;
 #robust_fit2();
 robust_fit();
+
+open(OUT, ">>$slope_file");
+print OUT "$slope\n";
+close(OUT);
+
 plot_fig2();
-pgptext($xin, $yin, 0.0, 0.0, "After/During, Slope:$pslope");
+pgptext($xin, $yin, 0.0, 0.0, "After/During");
 pgptext($xside, $ymid, 90.0, 0.5, "Ratios of Sigma of Gyro Drift Rate (Log)");
 
 #
@@ -281,7 +322,7 @@ pgptext($xside, $ymid, 90.0, 0.5, "Ratios of Sigma of Gyro Drift Rate (Log)");
 #
 pgsvp(0.08, 1.0, 0.05, 0.20);
 
-@temp = sort{$a<=>$b} @roll;
+@temp = sort{$a<=>$b} @before;
 $ymin = $temp[0];
 $ymax = $temp[$cnt-1];
 $ydiff = $ymax - $ymin;
@@ -307,9 +348,14 @@ pgbox(ABCNST,0.0 , 0.0, ABCLNSTV, 0.0, 0.0);
 @ydata= @ratio3;
 #robust_fit2();
 robust_fit();
+
+open(OUT, ">>$slope_file");
+print OUT "$slope\n";
+close(OUT);
+
 plot_fig2();
 pgptext($xmin, $ybot, 0.0, 0.0, "Time (DOM)");
-pgptext($xin, $yin, 0.0, 0.0, "Before/After, Slope:$pslope");
+pgptext($xin, $yin, 0.0, 0.0, "Before/After");
 
 pgclos();
 
@@ -418,7 +464,6 @@ sub robust_fit{
 	$int   = $alpha;
 	$slope = $beta;
 	$pslope = sprintf "%4.3e", $slope;
-
 }
 
 ####################################################################

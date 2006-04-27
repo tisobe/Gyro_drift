@@ -65,14 +65,46 @@ $in_list  = `ls $gif_name`;
 @list     = split(/\s+/, $in_list);
 
 $title1   = "$ugrat";
-if($lgrat eq 'insr'){
+if($lmove eq 'insr'){
 	$title2 = 'Insertion';
 }else{
 	$title2 = 'Retraction';
 }
 
 $name      = "$lgrat".'_'."$lmove";
+$data_file =  uc($name);
 $main_html = "$name".'.html';
+
+open(FH, "$data_file");
+@dyear  = ();
+@dydate = ();
+@pt_bf  = ();
+@pt_md  = ();
+@pt_af  = ();
+@rl_bf  = ();
+@rl_md  = ();
+@rl_af  = ();
+@yw_bf  = ();
+@yw_md  = ();
+@yw_af  = ();
+$dcnt    = 0;
+while(<FH>){
+	chomp $_;
+	@btemp = split(/\s+/, $_);
+	push(@dyear,  $btemp[0]);
+	push(@dydate, $btemp[1]);
+	push(@pt_bf,  $btemp[2]);
+	push(@pt_md,  $btemp[3]);
+	push(@pt_af,  $btemp[4]);
+	push(@rl_bf,  $btemp[5]);
+	push(@rl_md,  $btemp[6]);
+	push(@rl_af,  $btemp[7]);
+	push(@yw_bf,  $btemp[8]);
+	push(@yw_md,  $btemp[9]);
+	push(@yw_af,  $btemp[10]);
+	$dcnt++;
+}
+close(FH);
 
 open(OUT2, ">$web_dir/$main_html");
 
@@ -81,19 +113,26 @@ print OUT2 '<head><title>',"$name ",' </title></head>',"\n";
 print OUT2 '<body>',"\n";
 print OUT2 '<h2>',"$title1 $title2",'</h2>',"\n";
 print OUT2 '<br>',"\n",'<P>',"\n";
-print OUT2 'The list below shows the selections of a plot of gyro drift rate ',"\n";
-print OUT2 'around ',"$title1 $title2 ",'. To see the plot, click the "Plot" of the list, ',"\n";
+print OUT2 'The table below shows a plot of gyro drift rate, means and their standard deviations  ',"\n";
+print OUT2 'around ',"$title1 $title2 ",'. To see the plot, click the "Plot" on the table, ',"\n";
 print OUT2 'which opens up a new html page  with six plots on the page.',"\n";
 print OUT2 '</P><P>',"\n";
-print OUT2 'The plots on left panels are gryo drift rates of roll, pitch, and yaw around ',"\n";
+print OUT2 'The plots on left panels are gyro drift rates of roll, pitch, and yaw around ',"\n";
 print OUT2 "$title2",'. The red lines indicate the start time and the end time of the grating',"\n";
 print OUT2 'movement. The green line fitted are 5th degree of polynomial line around the ',"\n";
 print OUT2 'grating movement. The difference between the fitted line and the actual data points ',"\n";
 print OUT2 'are plotted on the right side panels.',"\n";
 print OUT2 '</P><br>',"\n";
-print OUT2 '<table border=0 cellspacing=2 cellpadding=2>',"\n";
-print OUT2 '<tr><th>Year</th><th>Year Date</th><th>Plot</th></tr>',"\n";
+print OUT2 '<table border=1 cellspacing=2 cellpadding=2>',"\n";
+print OUT2 '<tr><th rowspan=2>Year</th><th rowspan=2>Year Date</th><th rowspan=2>Plot</th>',"\n";
+print OUT2 '<th colspan=3>Pitch</th><th colspan=3>Roll</th><th colspan=3>Yaw</th></tr>',"\n";
+#print OUT2 '<th>&#160</th><th>&#160</th><th>&#160</th>';
+print OUT2 '<th>Before</th><th>During</th><th>After</th>';
+print OUT2 '<th>Before</th><th>During</th><th>After</th>';
+print OUT2 '<th>Before</th><th>During</th><th>After</th>',"\n";
 close(OUT2);
+
+$pos = 0;
 
 foreach $ent (@list){
 	chomp $ent;
@@ -150,9 +189,26 @@ foreach $ent (@list){
 #
 #--- add the new link to the main html page
 #	
+	OUTER:
+	for($m = $pos; $m < $dcnt; $m++){
+		if($year == $dyear[$m] && $yday == $dydate[$m]){
+			$pos = $m;
+			last OUTER;
+		}
+	}
 	open(OUT2, ">>$web_dir/$main_html");
-	print OUT2 '<tr><td>',"$year",'</td><td>',"$yday",'</td><td>';
-	print OUT2 '<a href="',"$html_name2",'", target=blank>Plot</a></td></tr>',"\n";
+	print OUT2 '<tr><th>',"$year",'</th><th>',"$yday",'</th><td>';
+	print OUT2 '<a href="',"$html_name2",'", target=blank>Plot</a></td>';
+	print OUT2 '<td align=right>',"$pt_bf[$pos]",'</td>';
+	print OUT2 '<td align=right>',"$pt_md[$pos]",'</td>';
+	print OUT2 '<td align=right>',"$pt_af[$pos]",'</td>';
+	print OUT2 '<td align=right>',"$rl_bf[$pos]",'</td>';
+	print OUT2 '<td align=right>',"$rl_md[$pos]",'</td>';
+	print OUT2 '<td align=right>',"$rl_af[$pos]",'</td>';
+	print OUT2 '<td align=right>',"$yw_bf[$pos]",'</td>';
+	print OUT2 '<td align=right>',"$yw_md[$pos]",'</td>';
+	print OUT2 '<td align=right>',"$yw_af[$pos]",'</td>';
+	print OUT2 '</tr>',"\n";
 	close(OUT2);
 }
 
