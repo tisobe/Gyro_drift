@@ -113,7 +113,8 @@ print OUT2 '<head><title>',"$name ",' </title></head>',"\n";
 print OUT2 '<body>',"\n";
 print OUT2 '<h2>',"$title1 $title2",'</h2>',"\n";
 print OUT2 '<br>',"\n",'<P>',"\n";
-print OUT2 'The table below shows a plot of gyro drift rate, means and their standard deviations  ',"\n";
+print OUT2 'The table below shows a plot of gyro drift rate, means and their standard deviations, ',"\n";
+print OUT2 'ratios of standard deviations of Before/During, After/During, and Before/After ', "\n";
 print OUT2 'around ',"$title1 $title2 ",'. To see the plot, click the "Plot" on the table, ',"\n";
 print OUT2 'which opens up a new html page  with six plots on the page.',"\n";
 print OUT2 '</P><P>',"\n";
@@ -201,44 +202,56 @@ foreach $ent (@list){
 			last OUTER;
 		}
 	}
+	
+	@bf_sig = split(/\+\/\-/, $pt_bf[$pos]);
+	@md_sig = split(/\+\/\-/, $pt_md[$pos]);
+	@af_sig = split(/\+\/\-/, $pt_af[$pos]);
 
-	if($pt_md[$pos] == 0){
+	if($md_sig[1] == 0){
 		$pt_r1 = 0;
 		$pt_f2 = 0;
 	}else{
-		$pt_r1 = abs($pt_bf[$pos]/$pt_md[$pos]);
-		$pt_r2 = abs($pt_af[$pos]/$pt_md[$pos]);
+		$pt_r1 = abs($bf_sig[1]/$md_sig[1]);
+		$pt_r2 = abs($af_sig[1]/$md_sig[1]);
 	}
-	if($pt_af[$pos] == 0){
+	if($af_sig[1] == 0){
 		$pt_r3 = 0;
 	}else{
-		$pt_r3 = abs($pt_bf[$pos]/$pt_af[$pos]);
+		$pt_r3 = abs($bf_sig[1]/$af_sig[1]);
 	}
+	
+	@bf_sig = split(/\+\/\-/, $rl_bf[$pos]);
+	@md_sig = split(/\+\/\-/, $rl_md[$pos]);
+	@af_sig = split(/\+\/\-/, $rl_af[$pos]);
 
-	if($rl_md[$pos] == 0){
+	if($md_sig[1] == 0){
 		$rl_r1 = 0;
 		$rl_f2 = 0;
 	}else{
-		$rl_r1 = abs($rl_bf[$pos]/$rl_md[$pos]);
-		$rl_r2 = abs($rl_af[$pos]/$rl_md[$pos]);
+		$rl_r1 = abs($bf_sig[1]/$md_sig[1]);
+		$rl_r2 = abs($af_sig[1]/$md_sig[1]);
 	}
-	if($rl_af[$pos] == 0){
+	if($af_sig[1] == 0){
 		$rl_r3 = 0;
 	}else{
-		$rl_r3 = abs($rl_bf[$pos]/$rl_af[$pos]);
+		$rl_r3 = abs($bf_sig[1]/$af_sig[1]);
 	}
+	
+	@bf_sig = split(/\+\/\-/, $yw_bf[$pos]);
+	@md_sig = split(/\+\/\-/, $yw_md[$pos]);
+	@af_sig = split(/\+\/\-/, $yw_af[$pos]);
 
-	if($yw_md[$pos] == 0){
+	if($md_sig[1] == 0){
 		$yw_r1 = 0;
 		$yw_f2 = 0;
 	}else{
-		$yw_r1 = abs($yw_bf[$pos]/$yw_md[$pos]);
-		$yw_r2 = abs($yw_af[$pos]/$yw_md[$pos]);
+		$yw_r1 = abs($bf_sig[1]/$md_sig[1]);
+		$yw_r2 = abs($af_sig[1]/$md_sig[1]);
 	}
-	if($yw_af[$pos] == 0){
+	if($af_sig[1] == 0){
 		$yw_r3 = 0;
 	}else{
-		$yw_r3 = abs($yw_bf[$pos]/$yw_af[$pos]);
+		$yw_r3 = abs($bf_sig[1]/$af_sig[1]);
 	}
 
 	if($pt_bf[$pos] > 30 || $pt_md[$pos] > 30 || $pt_af[$pos] > 30

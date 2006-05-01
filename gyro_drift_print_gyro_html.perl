@@ -96,6 +96,7 @@ foreach $file (@list){
 	print OUT '5th degree polynomial line fitted on the data. The first one ',"\n";
 	print OUT 'is before the grating motion started, the second one ',"\n";
 	print OUT 'is during the motion, and the last one is after the motion completed.',"\n";
+	print OUT 'The standard deviation larger than 5 is dropped from the computation as an outerlayer',"\n";
 	print OUT '</P><P>',"\n";
 	print OUT 'The next three plots are the ratio of the standard ',"\n";
 	print OUT 'deviations used in the first three plots. ',"\n";
@@ -110,8 +111,8 @@ foreach $file (@list){
 	print OUT '<img src="',"$gif_file",'"  height=500 width=700>',"\n";
 
 	print OUT '<br><br>';
-	print OUT 'The next table shows the means and standard deviations, ',"\n";
-	print OUT 'null probability, and slope of before, during, and after',"\n";
+	print OUT 'The next table shows the means and standard deviations of the ',"\n";
+	print OUT 'original standard deviations, null probability, and slope of before, during, and after',"\n";
 	print OUT 'the grating movements for the entire period.',"\n";
 	print OUT 'The average and the standard deviation are also computed for each year.';
 	print OUT '<br><br>',"\n";
@@ -325,6 +326,7 @@ sub find_avg {
 		${$cname} = 0;
 	}
 	
+	OUTER:
 	while(<FH>){
 		chomp $_;
 		@atemp = split(/\s+/, $_);
@@ -341,52 +343,58 @@ sub find_avg {
 #
 #--- save before, during, and after data
 #
-		@btemp = split(/\+/, $atemp[$first]);
-		push(@before, $btemp[0]);
-		@ctemp = split(/\+/, $atemp[$second]);
-		push(@during, $ctemp[0]);
-		@dtemp = split(/\+/, $atemp[$third]);
-		push(@after, $dtemp[0]);
+		@btemp = split(/\+\/\-/, $atemp[$first]);
+		@ctemp = split(/\+\/\-/, $atemp[$second]);
+		@dtemp = split(/\+\/\-/, $atemp[$third]);
+#
+#--- limt the std less than/equal 5
+#
+		if($btemp[1] > 5 || $ctemp[1] > 5 || $dtemp[1] > 5){
+			next OUTER;
+		}
+		push(@before, $btemp[1]);
+		push(@during, $ctemp[1]);
+		push(@after,  $dtemp[1]);
 #
 #--- compute the ratios
 #
-		if($ctemp[0] == 0){
+		if($ctemp[1] == 0){
 			$ratio1 = 0;
 			$ratio2 = 0;
 		}else{
-			$ratio1 = $btemp[0]/$ctemp[0];
-			$ratio2 = $dtemp[0]/$ctemp[0];
+			$ratio1 = abs($btemp[1]/$ctemp[1]);
+			$ratio2 = abs($dtemp[1]/$ctemp[1]);
 		}
-		if($dtemp[0] == 0){
+		if($dtemp[1] == 0){
 			$ratio3 = 0;
 		}else{
-			$ratio3 = $btemp[0]/$dtemp[0];
+			$ratio3 = abs($btemp[1]/$dtemp[1]);
 		}
 
 		push(@b_d, $ratio1);
 		push(@a_d, $ratio2);
 		push(@b_a, $ratio3);
 
-		$sum1  += $atemp[$first];
-		$sum2  += $atemp[$second];
-		$sum3  += $atemp[$third];
+		$sum1  += $btemp[1];
+		$sum2  += $ctemp[1];
+		$sum3  += $dtemp[1];
 		$sum4  += $ratio1;
 		$sum5  += $ratio2;
 		$sum6  += $ratio3;
-		$sum12 += $atemp[$first]  * $atemp[$first];
-		$sum22 += $atemp[$second] * $atemp[$second];
-		$sum32 += $atemp[$third]  * $atemp[$third];
+		$sum12 += $btemp[1] * $btemp[1];
+		$sum22 += $ctemp[1] * $ctemp[1];
+		$sum32 += $dtemp[1] * $dtemp[1];
 		$sum42 += $ratio1 * $ratio1;
 		$sum52 += $ratio2 * $ratio2;
 		$sum62 += $ratio3 * $ratio3;
 		$acnt++;
 
 		$name     = 'sum_'."$atemp[0]".'_1';
-		${$name} += $atemp[$first];
+		${$name} += $btemp[1];
 		$name     = 'sum_'."$atemp[0]".'_2';
-		${$name} += $atemp[$second];
+		${$name} += $ctemp[1];
 		$name     = 'sum_'."$atemp[0]".'_3';
-		${$name} += $atemp[$third];
+		${$name} += $dtemp[1];
 		$name     = 'sum_'."$atemp[0]".'_4';
 		${$name} += $ratio1;
 		$name     = 'sum_'."$atemp[0]".'_5';
@@ -396,11 +404,11 @@ sub find_avg {
 
 
 		$name     = 'sum_'."$atemp[0]".'_12';
-		${$name} += $atemp[$first] * $atemp[$first];
+		${$name} += $btemp[1] * $btemp[1];
 		$name     = 'sum_'."$atemp[0]".'_22';
-		${$name} += $atemp[$second] * $atemp[$second];
+		${$name} += $ctemp[1] * $ctemp[1];
 		$name     = 'sum_'."$atemp[0]".'_32';
-		${$name} += $atemp[$third] * $atemp[$third];
+		${$name} += $dtemp[1] * $dtemp[1];
 		$name     = 'sum_'."$atemp[0]".'_42';
 		${$name} += $ratio1 * $ratio1;
 		$name     = 'sum_'."$atemp[0]".'_52';
