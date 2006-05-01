@@ -75,7 +75,7 @@ foreach $file (@list){
 	$inst  = uc($btemp[4]);
 	if($btemp[5] eq 'insr'){
 		$ind  = 'insertion';
-		$uind = 'Incertion';
+		$uind = 'Insertion';
 	}else{
 		$ind  = 'retraction';
 		$uind = 'Retraction';
