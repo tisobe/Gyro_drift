@@ -74,7 +74,7 @@ foreach $file (@list){
 	$ugyro = uc($gyro);
 	$inst  = uc($btemp[4]);
 	if($btemp[5] eq 'insr'){
-		$ind  = 'incertion';
+		$ind  = 'insertion';
 		$uind = 'Incertion';
 	}else{
 		$ind  = 'retraction';
@@ -153,7 +153,7 @@ foreach $file (@list){
 #
 #--- null probability for the entire period
 #
-	print OUT '<tr><th>Null Probablity</th>',"\n";
+	print OUT '<tr><th>Null Probability</th>',"\n";
 	printf OUT "<td colspan=2 align=center>%3.1f%</td>",$prob_before;
 	printf OUT "<td colspan=2 align=center>%3.1f%</td>",$prob_during;
 	printf OUT "<td colspan=2 align=center>%3.1f%</td>",$prob_after;
@@ -276,7 +276,7 @@ sub find_avg {
 	open(FH, "$in_file");
 
 	@before = ();		#--- data for before the move
-	@during = ();		#--- data for duirng the move
+	@during = ();		#--- data for during the move
 	@after  = ();		#--- data for after the move
 	@b_d    = ();		#--- ratio of before/during
 	@a_d    = ();		#--- ratio of after/during
@@ -347,7 +347,7 @@ sub find_avg {
 		@ctemp = split(/\+\/\-/, $atemp[$second]);
 		@dtemp = split(/\+\/\-/, $atemp[$third]);
 #
-#--- limt the std less than/equal 5
+#--- limit the std less than/equal 5
 #
 		if($btemp[1] > 5 || $ctemp[1] > 5 || $dtemp[1] > 5){
 			next OUTER;

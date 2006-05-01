@@ -174,7 +174,7 @@ foreach $ent (@list){
 	print OUT '<p>',"\n";
 	print OUT 'The plots on left panels are gyro  drift rates of roll, pitch, and yaw around ',"\n";
 	print OUT "$title2",'. The plotted values are 10**5 of the actual values.',"\n";
-	print OUT ' The red lines indicate the start time and the end timd of the grating',"\n";
+	print OUT ' The red lines indicate the start time and the end time of the grating',"\n";
 	print OUT 'movement. The green line fitted are 5th degree of polynomial line around the ',"\n";
 	print OUT 'grating movement. The difference between the fitted line and the actual data points ',"\n";
 	print OUT 'are plotted on the right side panels. The values plotted are 10**9 of the ',"\n";
@@ -296,7 +296,7 @@ print OUT2 '</table>',"\n";
 print OUT2 '<br><br><hr>',"\n";
 print OUT2 "Last Update: $month/$umday/$uyear\n";
 print OUT2 '<br><br>',"\n";
-print OUT2 'If you have any quesitons, please contact',"\n";
+print OUT2 'If you have any questions, please contact',"\n";
 print OUT2 "<a href='mailto:isobe\@head.cfa.harvard.edu'>isobe\@head.cfa.harvard.edu</a>","\n";
 print OUT2 '</body>',"\n";
 print OUT2 '</html>',"\n";
