@@ -32,3 +32,4 @@ perl /data/mta/MTA/bin/gyro_drift_create_fig_html.perl LETG INSR
 perl /data/mta/MTA/bin/gyro_drift_create_fig_html.perl LETG RETR
 
 rm HETG_INSR HETG_RETR LETG_INSR LETG_RETR slope*
+rm *fits zlist
