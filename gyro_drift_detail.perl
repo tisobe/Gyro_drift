@@ -22,8 +22,8 @@ $web_dir    = '/data/mta/www/mta_grat/Gyro/';
 $result_dir = '/data/mta/www/mta_grat/Gyro/Result_dir/';
 $fig_out    = $web_dir;
 $fig_dir    = '/data/mta/www/mta_grat/Gyro/Fig_save/';
-$fits_dir   = '/data/mta/Script/Grating/Test/Gyro/Fits_dir/';
-$data_save  = '/data/mta/Script/Grating/Test/Gyro/Data/';
+$fits_dir   = '/data/mta/Script/Grating/Gyro/Fits_dir/';
+$data_save  = '/data/mta/Script/Grating/Gyro/Data/';
 
 #
 #--- and other settings

@@ -185,5 +185,5 @@ A control script for all gyro_drift related perl scripts.
 
 Cron Job:
 
-0 1 * * 0    cd /data/mta/Script/Grating/Test/Gyro/Exc; /data/mta/MTA/bin/gyro_drift_wrap_script > $HOME/Logs/gyro_drift 2>&1
+0 1 * * 0    cd /data/mta/Script/Grating/Gyro/Exc; /data/mta/MTA/bin/gyro_drift_wrap_script > $HOME/Logs/gyro_drift 2>&1
 
