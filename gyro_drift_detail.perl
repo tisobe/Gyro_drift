@@ -7,7 +7,7 @@ use PGPLOT;
 #											#
 #	author: t. isobe (tisobe@cfa.harvard.edu)					#
 #											#
-#	last update: May 28, 2008							#
+#	last update: Jul 15, 2009							#
 #											#
 #########################################################################################
 
@@ -488,7 +488,7 @@ for($i = 0; $i < $ocnt; $i++){
 #--- convert a ps file into a gif file
 #
 
-	system("echo ''|gs -sDEVICE=ppmraw  -r256x256 -q -NOPAUSE -sOutputFile=-  ./pgplot.ps|/data/mta/MTA/bin/pnmcrop| /data/mta/MTA/bin/pnmflip -r270 |/data/mta/MTA/bin/ppmtogif > $out_name");
+	system("echo ''|/opt/local/bin/gs -sDEVICE=ppmraw  -r256x256 -q -NOPAUSE -sOutputFile=-  ./pgplot.ps|/data/mta/MTA/bin/pnmcrop| /data/mta/MTA/bin/pnmflip -r270 |/data/mta/MTA/bin/ppmtogif > $out_name");
 	
 	if($ts_cnt > $ccnt){
 		print "end of the tsc data\n";

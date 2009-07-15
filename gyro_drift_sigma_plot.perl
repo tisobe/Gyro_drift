@@ -8,7 +8,7 @@ use PGPLOT;
 #										#
 #	author: t. isobe (tisobe@cfa.harvard.edu)				#
 #										#
-#	last update:	Apr 26, 2006						#
+#	last update:	Jul 15, 2009						#
 #										#
 #---usage: perl plot_gyro_sigma.perl  gyro_drift_hist_before HETG INSR		#
 #										#
@@ -364,7 +364,7 @@ $pind  = lc($ind);
 
 $out_name = "$file".'_'."$pinst".'_'."$pind".'.gif';
 
-system("echo ''|gs -sDEVICE=ppmraw  -r256x256 -q -NOPAUSE -sOutputFile=-  ./pgplot.ps|/data/mta/MTA/bin/pnmcrop| /data/mta/MTA/bin/pnmflip -r270 |/data/mta/MTA/bin/ppmtogif > $fig_dir/$out_name");
+system("echo ''|/opt/local/bin/gs -sDEVICE=ppmraw  -r256x256 -q -NOPAUSE -sOutputFile=-  ./pgplot.ps|/data/mta/MTA/bin/pnmcrop| /data/mta/MTA/bin/pnmflip -r270 |/data/mta/MTA/bin/ppmtogif > $fig_dir/$out_name");
 
 system("rm pgplot.ps");
 
