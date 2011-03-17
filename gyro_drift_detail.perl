@@ -7,7 +7,7 @@ use PGPLOT;
 #											#
 #	author: t. isobe (tisobe@cfa.harvard.edu)					#
 #											#
-#	last update: Jul 15, 2009							#
+#	last update: Mar 17, 2011							#
 #											#
 #########################################################################################
 
@@ -19,7 +19,8 @@ use PGPLOT;
 $bin_dir    = '/data/mta/MTA/bin/';
 $data_dir   = '/data/mta/MTA/data/';
 $web_dir    = '/data/mta/www/mta_grat/Gyro/';
-$result_dir = '/data/mta/www/mta_grat/Gyro/Result_dir/';
+#$result_dir = '/data/mta/www/mta_grat/Gyro/Result_dir/';
+$result_dir = '/data/mta/Script/Grating/Gyro/Result_dir/';
 $fig_out    = $web_dir;
 $fig_dir    = '/data/mta/www/mta_grat/Gyro/Fig_save/';
 $fits_dir   = '/data/mta/Script/Grating/Gyro/Fits_dir/';

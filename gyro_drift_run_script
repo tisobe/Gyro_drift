@@ -35,3 +35,8 @@ set path = (/home/ascds/DS.release/bin/  $path)
 
 rm HETG_INSR HETG_RETR LETG_INSR LETG_RETR slope*
 rm *fits zlist
+
+chgrp mtagroup /data/mta_www/mta_grat/Gyro/* 
+chgrp mtagroup /data/mta_www/mta_grat/Gyro/*/*
+chgrp mtagroup /data/mta/Script/Grating/Gyro/Data/*
+chgrp mtagroup /data/mta/Script/Grating/Gyro/Result_dir/*
