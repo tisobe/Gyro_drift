@@ -7,32 +7,43 @@
 #											#
 #	author: t. isobe (tisobe@cfa.harvard.edu)					#
 #											#
-#	last update:	Mar 28, 2006							#
+#	last update:	Mar 11, 2013							#
 #											#
 # 	usage: perl  gyro_drift_create_fig_html.perl HETG INSR				#
 #											#
 #########################################################################################
+#
+#--- html 5 conformed (Oct 15, 2012)
+#
+#
+#--- check whether this is a test case
+#
+OUTER:
+for($i = 0; $i < 10; $i++){
+	if($ARGV[$i] =~ /test/i){
+		$comp_test = 'test';
+		last OUTER;
+	}elsif($ARGV[$i] eq ''){
+		$comp_test = '';
+		last OUTER;
+	}
+}
 
 #
 #---- read directories
 #
-
-open(FH, './dir_list');
-@dir_list = ();
+if($comp_test =~ /test/i){
+	open(FH, "/data/mta/Script/Grating/Gyro/house_keeping/dir_list_test");
+}else{
+	open(FH, "/data/mta/Script/Grating/Gyro/house_keeping/dir_list");
+}
 while(<FH>){
-        chomp $_;
-        push(@dir_list, $_);
+    chomp $_;
+    @atemp = split(/\s+/, $_);
+    ${$atemp[0]} = $atemp[1];
 }
 close(FH);
 
-$bin_dir    = $dir_list[0];
-$data_dir   = $dir_list[1];
-$web_dir    = $dir_list[2];
-$result_dir = $dir_list[3];
-$fig_out    = $dir_list[4];
-$fig_dir    = $dir_list[5];
-$fits_dir   = $dir_list[6];
-$data_save  = $dir_list[7];
 
 #
 #--- find today's date
@@ -108,34 +119,50 @@ close(FH);
 
 open(OUT2, ">$web_dir/$main_html");
 
+print OUT2 "<!DOCTYPE html>\n";
 print OUT2 '<html>',"\n";
-print OUT2 '<head><title>',"$name ",' </title></head>',"\n";
+print OUT2 "<head>\n";
+print OUT2 "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n";
+print OUT2 '<link rel="stylesheet" type="text/css" href="http://asc.harvard.edu/mta/REPORTS/Template/mta.css" />',"\n";
+
+print OUT2 "<style  type='text/css'>\n";
+print OUT2 "table{text-align:center;margin-left:auto;margin-right:auto;border-style:solid;border-spacing:8px;border-width:2px;border-collapse:separate}\n";
+print OUT2 "td{text-align:center;padding:8px}\n";
+print OUT2 "a:link {color:#00CCFF;}\n";
+print OUT2 "a:visited {color:yellow;}\n";
+print OUT2 "span.nobr {white-space:nowrap;}\n";
+print OUT2 "</style>\n";
+
+print OUT2 '<title>',"$name ",' </title></head>',"\n";
+
 print OUT2 '<body>',"\n";
+
 print OUT2 '<h2>',"$title1 $title2",'</h2>',"\n";
-print OUT2 '<br>',"\n",'<P>',"\n";
+print OUT2 '<br />',"\n",'<p>',"\n";
 print OUT2 'The table below shows a plot of gyro drift rate, means and their standard deviations, ',"\n";
 print OUT2 'ratios of standard deviations of Before/During, After/During, and Before/After ', "\n";
 print OUT2 'around ',"$title1 $title2 ",'. To see the plot, click the "Plot" on the table, ',"\n";
 print OUT2 'which opens up a new html page  with six plots on the page.',"\n";
-print OUT2 '</P><P>',"\n";
+print OUT2 '</p><p>',"\n";
 print OUT2 'The plots on left panels are gyro drift rates of roll, pitch, and yaw around ',"\n";
 print OUT2 "$title2",'. The red lines indicate the start time and the end time of the grating',"\n";
 print OUT2 'movement. The green line fitted are 5th degree of polynomial line around the ',"\n";
 print OUT2 'grating movement. The difference between the fitted line and the actual data points ',"\n";
 print OUT2 'are plotted on the right side panels.',"\n";
-print OUT2 '</P><br>',"\n";
-print OUT2 '<table border=1 cellspacing=2 cellpadding=2>',"\n";
+print OUT2 '</p><br />',"\n";
+print OUT2 '<table border=1>',"\n";
 print OUT2 '<tr><th rowspan=2>Year</th><th rowspan=2>Year Date</th><th rowspan=2>Plot</th>',"\n";
 print OUT2 '<th colspan=6>Pitch</th><th colspan=6>Roll</th><th colspan=6>Yaw</th></tr>',"\n";
-#print OUT2 '<th>&#160</th><th>&#160</th><th>&#160</th>';
+print OUT2 "<tr>\n";
 print OUT2 '<th>Before</th><th>During</th><th>After</th>';
 print OUT2 '<th>Before/During</th><th>After/During</th><th>Before/After</th>';
 print OUT2 '<th>Before</th><th>During</th><th>After</th>';
 print OUT2 '<th>Before/During</th><th>After/During</th><th>Before/After</th>';
 print OUT2 '<th>Before</th><th>During</th><th>After</th>';
 print OUT2 '<th>Before/During</th><th>After/During</th><th>Before/After</th>';
+print OUT2 "</tr>\n";
 print OUT2 "\n";
-close(OUT2);
+#close(OUT2);
 
 $pos = 0;
 
@@ -167,8 +194,21 @@ foreach $ent (@list){
 
 	open(OUT, ">$html_name");
 
+	print OUT "<!DOCTYPE html>\n";
 	print OUT '<html>',"\n";
-	print OUT '<head><title>'," $inst $ind $time",' </title></head>',"\n";
+	print OUT "<head>\n";
+	print OUT "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n";
+	print OUT '<link rel="stylesheet" type="text/css" href="http://asc.harvard.edu/mta/REPORTS/Template/mta.css" />', "\n";
+
+	print OUT "<style  type='text/css'>\n";
+	print OUT "table{text-align:center;margin-left:auto;margin-right:auto;border-style:solid;border-spacing:8px;border-width:2px;border-collapse:separate}\n";
+	print OUT "td{text-align:center;padding:8px}\n";
+	print OUT "a:link {color:#00CCFF;}\n";
+	print OUT "a:visited {color:yellow;}\n";
+	print OUT "span.nobr {white-space:nowrap;}\n";
+	print OUT "</style>\n";
+
+	print OUT  '<title>'," $inst $ind $time",' </title></head>',"\n";
 	print OUT '<body>',"\n";
 	print OUT '<h2>Instrument:'," $inst",' Move:'," $ind",'  Time:'," $time",' </h2>',"\n";
 	print OUT '<p>',"\n";
@@ -182,8 +222,8 @@ foreach $ent (@list){
 	print OUT 'the right panels are only around the grating movement.',"\n";
 	print OUT 'The values listed at the left top corner is the mean and standard deviation of ',"\n";
 	print OUT 'the deviations.',"\n";
-	print OUT '</P><br><br>',"\n";
-	print OUT '<img src= "',"$gif_name",'", height=500 width=700>',"\n";
+	print OUT '</p><br /><br />',"\n";
+	print OUT '<img src= "',"$gif_name",'" alt = "',"$gif_name",'"  style="height:500px;width:700px">',"\n";
 	print OUT '</body>',"\n";
 	print OUT '</html>',"\n";
 
@@ -259,43 +299,43 @@ foreach $ent (@list){
 			|| $yw_bf[$pos] > 30 || $yw_md[$pos] > 30 || $yw_af[$pos] > 30){
 		next OUTER2;
 	}
-	open(OUT2, ">>$web_dir/$main_html");
+#	open(OUT2, ">>$web_dir/$main_html");
 	print OUT2 '<tr><th>',"$year",'</th><th>',"$yday",'</th><td>';
-	print OUT2 '<a href="',"$html_name2",'", target=blank>Plot</a></td>';
+	print OUT2 '<a href="',"$html_name2",'" target="_blank">Plot</a></td>';
 
-	print OUT2 '<td align=right>',"$pt_bf[$pos]",'</td>';
-	print OUT2 '<td align=right>',"$pt_md[$pos]",'</td>';
-	print OUT2 '<td align=right>',"$pt_af[$pos]",'</td>';
+	print OUT2 '<td style="text-align:right">',"$pt_bf[$pos]",'</td>';
+	print OUT2 '<td style="text-align:right">',"$pt_md[$pos]",'</td>';
+	print OUT2 '<td style="text-align:right">',"$pt_af[$pos]",'</td>';
 
-	printf OUT2 "<td align=center>%2.3f</td>",$pt_r1;
-	printf OUT2 "<td align=center>%2.3f</td>",$pt_r2;
-	printf OUT2 "<td align=center>%2.3f</td>",$pt_r3;
+	printf OUT2 "<td style='text-align:center'>%2.3f</td>",$pt_r1;
+	printf OUT2 "<td style='text-align:center'>%2.3f</td>",$pt_r2;
+	printf OUT2 "<td style='text-align:center'>%2.3f</td>",$pt_r3;
 
-	print OUT2 '<td align=right>',"$rl_bf[$pos]",'</td>';
-	print OUT2 '<td align=right>',"$rl_md[$pos]",'</td>';
-	print OUT2 '<td align=right>',"$rl_af[$pos]",'</td>';
+	print OUT2 '<td style="text-align:right">',"$rl_bf[$pos]",'</td>';
+	print OUT2 '<td style="text-align:right">',"$rl_md[$pos]",'</td>';
+	print OUT2 '<td style="text-align:right">',"$rl_af[$pos]",'</td>';
 
-	printf OUT2 "<td align=center>%2.3f</td>",$rl_r1;
-	printf OUT2 "<td align=center>%2.3f</td>",$rl_r2;
-	printf OUT2 "<td align=center>%2.3f</td>",$rl_r3;
+	printf OUT2 "<td style='text-align:center'>%2.3f</td>",$rl_r1;
+	printf OUT2 "<td style='text-align:center'>%2.3f</td>",$rl_r2;
+	printf OUT2 "<td style='text-align:center'>%2.3f</td>",$rl_r3;
 
-	print OUT2 '<td align=right>',"$yw_bf[$pos]",'</td>';
-	print OUT2 '<td align=right>',"$yw_md[$pos]",'</td>';
-	print OUT2 '<td align=right>',"$yw_af[$pos]",'</td>';
+	print OUT2 '<td style="text-align:right">',"$yw_bf[$pos]",'</td>';
+	print OUT2 '<td style="text-align:right">',"$yw_md[$pos]",'</td>';
+	print OUT2 '<td style="text-align:right">',"$yw_af[$pos]",'</td>';
 
-	printf OUT2 "<td align=center>%2.3f</td>",$yw_r1;
-	printf OUT2 "<td align=center>%2.3f</td>",$yw_r2;
-	printf OUT2 "<td align=center>%2.3f</td>",$yw_r3;
+	printf OUT2 "<td style='text-align:center'>%2.3f</td>",$yw_r1;
+	printf OUT2 "<td style='text-align:center'>%2.3f</td>",$yw_r2;
+	printf OUT2 "<td style='text-align:center'>%2.3f</td>",$yw_r3;
 
 	print OUT2 '</tr>',"\n";
-	close(OUT2);
+#	close(OUT2);
 }
 
-open(OUT2,">>$web_dir/$main_html");
+#open(OUT2,">>$web_dir/$main_html");
 print OUT2 '</table>',"\n";
-print OUT2 '<br><br><hr>',"\n";
+print OUT2 '<br /><br /><hr />',"\n";
 print OUT2 "Last Update: $month/$umday/$uyear\n";
-print OUT2 '<br><br>',"\n";
+print OUT2 '<br /><br />',"\n";
 print OUT2 'If you have any questions, please contact',"\n";
 print OUT2 "<a href='mailto:isobe\@head.cfa.harvard.edu'>isobe\@head.cfa.harvard.edu</a>","\n";
 print OUT2 '</body>',"\n";
@@ -308,7 +348,7 @@ close(OUT2);
 
 $update = "Last Update: $month/$umday/$uyear";
 
-open (FH, "$web_dir/gyro_main.html");
+open (FH, "$house_keeping/gyro_main.html");
 @save_line = ();
 while(<FH>){
 	chomp $_;
@@ -325,5 +365,3 @@ foreach $ent (@save_line){
 	print OUT "$ent\n";
 }
 close(OUT);
-
-system("rm data_out");

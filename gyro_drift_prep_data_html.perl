@@ -6,30 +6,30 @@
 #											#
 #	author: t. isobe (tisobe@cfa.harvard.edu)					#
 #											#
-#	last update: 04/26/2006								#
+#	last update: Mar 11, 2013							#
 #											#
 #########################################################################################
 
 #
+#--- test whether tthis is a test case
+#
+$comp_test = $ARGV[0];
+chomp $comp_test;
+#
 #---- read directories
 #
-
-open(FH, './dir_list');
-@dir_list = ();
+if($comp_test =~ /test/i){
+	open(FH, "/data/mta/Script/Grating/Gyro/house_keeping/dir_list_test");
+}else{
+	open(FH, "/data/mta/Script/Grating/Gyro/house_keeping/dir_list");
+}
 while(<FH>){
-        chomp $_;
-        push(@dir_list, $_);
+    chomp $_;
+    @atemp = split(/\s+/, $_);
+    ${$atemp[0]} = $atemp[1];
 }
 close(FH);
 
-$bin_dir    = $dir_list[0];
-$data_dir   = $dir_list[1];
-$web_dir    = $dir_list[2];
-$result_dir = $dir_list[3];
-$fig_out    = $dir_list[4];
-$fig_dir    = $dir_list[5];
-$fits_dir   = $dir_list[6];
-$data_save  = $dir_list[7];
 
 #
 #--- open three data files

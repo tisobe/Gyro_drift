@@ -8,32 +8,41 @@ use PGPLOT;
 #										#
 #	author: t. isobe (tisobe@cfa.harvard.edu)				#
 #										#
-#	last update:	Jul 15, 2009						#
+#	last update:	Mar 11, 2013						#
 #										#
 #---usage: perl plot_gyro_sigma.perl  gyro_drift_hist_before HETG INSR		#
 #										#
 #################################################################################
 
 #
+#--- check whether this is a test case
+#
+OUTER:
+for($i = 0; $i < 10; $i++){
+	if($ARGV[$i] =~ /test/i){
+		$comp_test = 'test';
+		last OUTER;
+	}elsif($ARGV[$i] eq ''){
+		$comp_test = '';
+		last OUTER;
+	}
+}
+
+#
 #---- read directories
 #
-
-open(FH, './dir_list');
-@dir_list = ();
+if($comp_test =~ /test/i){
+	open(FH, "/data/mta/Script/Grating/Gyro/house_keeping/dir_list_test");
+}else{
+	open(FH, "/data/mta/Script/Grating/Gyro/house_keeping/dir_list");
+}
 while(<FH>){
-	chomp $_;
-	push(@dir_list, $_);
+    chomp $_;
+    @atemp = split(/\s+/, $_);
+    ${$atemp[0]} = $atemp[1];
 }
 close(FH);
 
-$bin_dir    = $dir_list[0];
-$data_dir   = $dir_list[1];
-$web_dir    = $dir_list[2];
-$result_dir = $dir_list[3];
-$fig_out    = $dir_list[4];
-$fig_dir    = $dir_list[5];
-$fits_dir   = $dir_list[6];
-$data_save  = $dir_list[7];
 
 $file = $ARGV[0];		# input data file name
 $inst = $ARGV[1];		# instrument name
@@ -118,9 +127,9 @@ close(FH);
 #--- set time plotting range etc
 #
 
-@temp = sort{$a<=>$b} @time;
-$xmin = $temp[0];
-$xmax = $temp[$cnt-1];
+@temp  = sort{$a<=>$b} @time;
+$xmin  = $temp[0];
+$xmax  = $temp[$cnt-1];
 $xdiff = $xmax - $xmin;
 $xmin -= 0.1 * $xdiff;
 $xmax += 0.1 * $xdiff;
@@ -130,9 +139,9 @@ $xmid  = $xmin + 0.5 * $xdiff;
 $xside = $xmin - 0.07 * $xdiff;
 $xin   = $xmin + 0.1 * $xdiff;
 
-@xin = @time;
-@xdata = @xin;
-$tot = $cnt;
+@xin      = @time;
+@xdata    = @xin;
+$tot      = $cnt;
 $data_cnt = $cnt;
 
 pgbegin(0, '"./pgplot.ps"/cps',1,1);
@@ -140,7 +149,7 @@ pgsubp(1,1);
 pgsch(1);
 pgslw(2);
 
-$color = 1;
+$color  = 1;
 $symbol = 2;
 
 #
@@ -148,9 +157,9 @@ $symbol = 2;
 #
 pgsvp(0.08, 1.0, 0.85, 1.00);
 
-@temp = sort{$a<=>$b} @before;
-$ymin = $temp[0];
-$ymax = $temp[$cnt-1];
+@temp  = sort{$a<=>$b} @before;
+$ymin  = $temp[0];
+$ymax  = $temp[$cnt-1];
 $ydiff = $ymax - $ymin;
 $ymin -= 0.1 * $ydiff;
 $ymin  = 0.0;
@@ -161,12 +170,13 @@ $ybot  = $ymin - 0.1 * $ydiff;
 $ymid  = $ymin + 0.5 * $ydiff;
 $yin   = $ymax - 0.15 * $ydiff;
 
-
 pgswin($xmin, $xmax, $ymin, $ymax);
 pgbox(ABCST,0.0 , 0.0, ABCNSTV, 0.0, 0.0);
 @yin = @before;
 @ydata= @before;
+
 robust_fit();
+
 #
 #--- print out the slope value
 #
@@ -182,9 +192,9 @@ pgptext($xin, $yin, 0.0, 0.0, "Before");
 #
 pgsvp(0.08, 1.0, 0.69, 0.84);
 
-@temp = sort{$a<=>$b} @before;
-$ymin = $temp[0];
-$ymax = $temp[$cnt-1];
+@temp  = sort{$a<=>$b} @before;
+$ymin  = $temp[0];
+$ymax  = $temp[$cnt-1];
 $ydiff = $ymax - $ymin;
 $ymin -= 0.1 * $ydiff;
 $ymin  = 0.0;
@@ -199,6 +209,7 @@ pgswin($xmin, $xmax, $ymin, $ymax);
 pgbox(ABCST,0.0 , 0.0, ABCNSTV, 0.0, 0.0);
 @yin = @during;
 @ydata= @during;
+
 robust_fit();
 
 open(OUT, ">>$slope_file");
@@ -215,9 +226,9 @@ pgptext($xside, $ymid, 90.0, 0.5, "Sigma of Gyro Drift Rate");
 #
 pgsvp(0.08, 1.0, 0.53, 0.68);
 
-@temp = sort{$a<=>$b} @before;
-$ymin = $temp[0];
-$ymax = $temp[$cnt-1];
+@temp  = sort{$a<=>$b} @before;
+$ymin  = $temp[0];
+$ymax  = $temp[$cnt-1];
 $ydiff = $ymax - $ymin;
 $ymin -= 0.1 * $ydiff;
 $ymin  = 0.0;
@@ -232,6 +243,7 @@ pgswin($xmin, $xmax, $ymin, $ymax);
 pgbox(ABCST,0.0 , 0.0, ABCNSTV, 0.0, 0.0);
 @yin = @after;
 @ydata= @after;
+
 robust_fit();
 
 open(OUT, ">>$slope_file");
@@ -247,9 +259,9 @@ pgptext($xin, $yin, 0.0, 0.0, "After");
 #
 pgsvp(0.08, 1.0, 0.37, 0.52);
 
-@temp = sort{$a<=>$b} @before;
-$ymin = $temp[0];
-$ymax = $temp[$cnt-1];
+@temp  = sort{$a<=>$b} @before;
+$ymin  = $temp[0];
+$ymax  = $temp[$cnt-1];
 $ydiff = $ymax - $ymin;
 $ymin -= 0.1 * $ydiff;
 $ymin  = 0.0;
@@ -266,6 +278,7 @@ pgbox(ABCST,0.0 , 0.0, ABCLNSTV, 0.0, 0.0);
 @yin = @ratio1;
 @ydata= @ratio1;
 #robust_fit2();
+
 robust_fit();
 
 open(OUT, ">>$slope_file");
@@ -281,10 +294,10 @@ pgptext($xin, $yin, 0.0, 0.0, "Before/During");
 #
 pgsvp(0.08, 1.0, 0.21, 0.36);
 
-@temp = sort{$a<=>$b} @before;
-$ymin = $temp[0];
+@temp  = sort{$a<=>$b} @before;
+$ymin  = $temp[0];
 $ymin  = 0.0;
-$ymax = $temp[$cnt-1];
+$ymax  = $temp[$cnt-1];
 $ydiff = $ymax - $ymin;
 $ymin -= 0.1 * $ydiff;
 $ymin  = 0.0;
@@ -307,6 +320,7 @@ pgbox(ABCST,0.0 , 0.0, ABCLNSTV, 0.0, 0.0);
 @yin = @ratio2;
 @ydata= @ratio2;
 #robust_fit2();
+
 robust_fit();
 
 open(OUT, ">>$slope_file");
@@ -322,9 +336,9 @@ pgptext($xside, $ymid, 90.0, 0.5, "Ratios of Sigma of Gyro Drift Rate (Log)");
 #
 pgsvp(0.08, 1.0, 0.05, 0.20);
 
-@temp = sort{$a<=>$b} @before;
-$ymin = $temp[0];
-$ymax = $temp[$cnt-1];
+@temp  = sort{$a<=>$b} @before;
+$ymin  = $temp[0];
+$ymax  = $temp[$cnt-1];
 $ydiff = $ymax - $ymin;
 $ymin -= 0.1 * $ydiff;
 $ymin  = 0.0;
@@ -347,6 +361,7 @@ pgbox(ABCNST,0.0 , 0.0, ABCLNSTV, 0.0, 0.0);
 @yin = @ratio3;
 @ydata= @ratio3;
 #robust_fit2();
+
 robust_fit();
 
 open(OUT, ">>$slope_file");
@@ -364,7 +379,7 @@ $pind  = lc($ind);
 
 $out_name = "$file".'_'."$pinst".'_'."$pind".'.gif';
 
-system("echo ''|/opt/local/bin/gs -sDEVICE=ppmraw  -r256x256 -q -NOPAUSE -sOutputFile=-  ./pgplot.ps|/data/mta/MTA/bin/pnmcrop| /data/mta/MTA/bin/pnmflip -r270 |/data/mta/MTA/bin/ppmtogif > $fig_dir/$out_name");
+system("echo ''|$op_dir/gs -sDEVICE=ppmraw  -r256x256 -q -NOPAUSE -sOutputFile=-  ./pgplot.ps|$op_dir/pnmcrop| $op_dir/pnmflip -r270 |$op_dir/ppmtogif > $fig_dir/$out_name");
 
 system("rm pgplot.ps");
 
@@ -445,25 +460,31 @@ sub robust_fit{
 			$sumy += $ydata[$n];
 		}
 	}
-	$xavg = $sumx/$tcnt;
-	$yavg = $sumy/$tcnt;
+	if($tcnt > 0){
+		$xavg = $sumx/$tcnt;
+		$yavg = $sumy/$tcnt;
 #
 #--- robust fit works better if the intercept is close to the
 #--- middle of the data cluster.
 #
-	@xbin = ();
-	@ybin = ();
-	for($n = 0; $n < $tcnt; $n++){
-		$xbin[$n] = $xtemp[$n] - $xavg;
-		$ybin[$n] = $ytemp[$n] - $yavg;
+		@xbin = ();
+		@ybin = ();
+		for($n = 0; $n < $tcnt; $n++){
+			$xbin[$n] = $xtemp[$n] - $xavg;
+			$ybin[$n] = $ytemp[$n] - $yavg;
+		}
+	
+		$total  = $tcnt;
+		medfit();
+		$alpha += $beta * (-1.0 * $xavg) + $yavg;
+		$int    = $alpha;
+		$slope  = $beta;
+		$pslope = sprintf "%4.3e", $slope;
+	}else{
+		$int    = -999;
+		$slope  = -999;
+		$pslope = -999;
 	}
-
-	$total = $tcnt;
-	medfit();
-	$alpha += $beta * (-1.0 * $xavg) + $yavg;
-	$int   = $alpha;
-	$slope = $beta;
-	$pslope = sprintf "%4.3e", $slope;
 }
 
 ####################################################################

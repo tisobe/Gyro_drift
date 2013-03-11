@@ -7,24 +7,30 @@ use PGPLOT;
 #											#
 #	author: t. isobe (tisobe@cfa.harvard.edu)					#
 #											#
-#	last update: Mar 17, 2011							#
+#	last update: Mar 11, 2013							#
 #											#
 #########################################################################################
+#
+#--- check whether this is a test case
+#
+$comp_test = $ARGV[0];
+chomp $comp_test;
 
 #########################################################
 #
 #---- set directories
 #
-
-$bin_dir    = '/data/mta/MTA/bin/';
-$data_dir   = '/data/mta/MTA/data/';
-$web_dir    = '/data/mta/www/mta_grat/Gyro/';
-#$result_dir = '/data/mta/www/mta_grat/Gyro/Result_dir/';
-$result_dir = '/data/mta/Script/Grating/Gyro/Result_dir/';
-$fig_out    = $web_dir;
-$fig_dir    = '/data/mta/www/mta_grat/Gyro/Fig_save/';
-$fits_dir   = '/data/mta/Script/Grating/Gyro/Fits_dir/';
-$data_save  = '/data/mta/Script/Grating/Gyro/Data/';
+if($comp_test =~ /test/i){
+	open(FH, "/data/mta/Script/Grating/Gyro/house_keeping/dir_list_test");
+}else{
+	open(FH, "/data/mta/Script/Grating/Gyro/house_keeping/dir_list");
+}
+while(<FH>){
+    chomp $_;
+    @atemp = split(/\s+/, $_);
+    ${$atemp[0]} = $atemp[1];
+}
+close(FH);
 
 #
 #--- and other settings
@@ -36,52 +42,44 @@ $hakama = `cat $data_dir/.hakama`;
 chomp $hakama;
 
 #########################################################
-#
-#--- create a file containing a directory list
-#
-open(OUT, '>./dir_list');
-print OUT "$bin_dir\n";
-print OUT "$data_dir\n";
-print OUT "$web_dir\n";
-print OUT "$result_dir\n";
-print OUT "$fig_out\n";
-print OUT "$fig_dir\n";
-print OUT "$fits_dir\n";
-print OUT "$data_save\n";
-close(OUT);
 
+if($comp_test =~ /test/i){
+	$last_time = 2012363;
+	$stop_time = 2013060;
+}else{
 #
 #--- find today's date
 #
 
-($usec, $umin, $uhour, $umday, $umon, $uyear, $uwday, $uyday, $uisdst) = localtime(time);
-$uyear += 1900;
-$month = $umon + 1;
+	($usec, $umin, $uhour, $umday, $umon, $uyear, $uwday, $uyday, $uisdst) = localtime(time);
+	$uyear += 1900;
+	$month = $umon + 1;
 
 #
 #--- check the most recent data we computed
 #
 
-$in_list = `ls -lrt $data_save/*gz`;
-@data_list = split(/\s+/, $in_list);
-@past_time = ();
-$tcnt = 0;
-foreach $ent (@data_list){
-	@atemp = split(/_data/, $ent);
-	@btemp = split(/_/, $atemp[0]);
-	$atime = pop(@btemp);
-	push(@past_time, $atime);
-	$tcnt++;
-}
-close(FH);
-
-@t_list = sort{$b<=>$a} @past_time;
+	$in_list = `ls -lrt $data_save/*gz`;
+	@data_list = split(/\s+/, $in_list);
+	@past_time = ();
+	$tcnt = 0;
+	foreach $ent (@data_list){
+		@atemp = split(/_data/, $ent);
+		@btemp = split(/_/, $atemp[0]);
+		$atime = pop(@btemp);
+		push(@past_time, $atime);
+		$tcnt++;
+	}
+	close(FH);
+	
+	@t_list = sort{$b<=>$a} @past_time;
 
 #
 #----  the last data time
 #
 
-$last_time = $t_list[0];
+	$last_time = $t_list[0];
+}
 
 #
 #--- read grating moves 
@@ -116,6 +114,10 @@ while(<FH>){
 		if($atemp[2] <= $last_time){
 			next OUTER;
 		}
+		if($comp_test =~ /test/ && $atemp[2] > $stop_time){	#-- if this is a test, limit data 
+			last OUTER;
+		}
+
 		push(@ind,  $atemp[0]);
 		push(@grat, $atemp[1]);
 		push(@start, $atemp[2]);
@@ -160,21 +162,23 @@ for($i = 0; $i < $ocnt; $i++){
 #
 #--- we use two different ranges of data (latter for polynomial fittting)
 #
-	$sz1 = $tstart[$i]-  $mid_time;
-	$sz2 = $tstop[$i] -  $mid_time;
+	$sz1  = $tstart[$i]-  $mid_time;
+	$sz2  = $tstop[$i] -  $mid_time;
 	$lsz1 = $tstart[$i]-  $mid_time - 0.2 * $range;
 	$lsz2 = $tstop[$i] -  $mid_time + 0.2 * $range;
 #
 #---- set tstart and tstop of arc4gl to extract data
 #
-	@pstime    = ();
-	@pstsc     = ();
-	$pscnt     = 0;
-	$tyear = $syear[$i];
-	$tday  = $syday[$i];
+	@pstime = ();
+	@pstsc  = ();
+	$pscnt  = 0;
+	$tyear  = $syear[$i];
+	$tday   = $syday[$i];
+
 	ch_ydate_to_mon_date();
-	$hr = int($stime[$i]/3600);
-	$min = int (($stime[$i] - 3600 * $hr)/ 60);
+
+	$hr     = int($stime[$i]/3600);
+	$min    = int (($stime[$i] - 3600 * $hr)/ 60);
 	$syear1 = $syear[$i];
 	$hr--;
 	if($hr < 0){
@@ -193,9 +197,11 @@ for($i = 0; $i < $ocnt; $i++){
 
 	$tyear = $eyear[$i];
 	$tday  = $eyday[$i];
+
 	ch_ydate_to_mon_date();
-	$hr = int($stime[$i]/3600);
-	$min = int (($stime[$i] - 3600 * $hr)/ 60);
+
+	$hr     = int($stime[$i]/3600);
+	$min    = int (($stime[$i] - 3600 * $hr)/ 60);
 	$syear2 = $syear[$i];
 	$hr++;
 	if($hr > 23){
@@ -237,7 +243,7 @@ for($i = 0; $i < $ocnt; $i++){
         }
         close(FH);
 
-	@cstime = ();
+	@cstime   = ();
 	@aogbias1 = ();			# gyro drift rate roll
 	@aogbias2 = ();			# gyro drift rate pitch
 	@aogbias3 = ();			# gyro drift rate yaw
@@ -245,7 +251,7 @@ for($i = 0; $i < $ocnt; $i++){
 #
 #---- this data set for polynomial fitting
 #
-	@lcstime = ();
+	@lcstime   = ();
 	@laogbias1 = ();
 	@laogbias2 = ();
 	@laogbias3 = ();
@@ -254,6 +260,7 @@ for($i = 0; $i < $ocnt; $i++){
 	foreach $file (@data_list){
 		$line = "$file".'[cols time,AOGBIAS1,AOGBIAS2,AOGBIAS3]';
 		system("dmlist  \"$line\" opt=data > data_out");
+
 		open(FH, "data_out");
 		while(<FH>){
 			chomp $_;
@@ -264,16 +271,19 @@ for($i = 0; $i < $ocnt; $i++){
 			$t_diff = ($atemp[2] - $mid_time);
 			if($t_diff > -$range && $t_diff < $range){
 				push(@cstime, $t_diff);
+
 				$ain1 = 10e5 * $atemp[3];
 				push(@aogbias1, $ain1);
+
 				$ain2 = 10e5 * $atemp[4];
 				push(@aogbias2, $ain2);
+
 				$ain3 = 10e5 * $atemp[5];
 				push(@aogbias3, $ain3);
 				$ccnt++;
 
 				if($t_diff > $lsz1 && $t_diff < $lsz2){
-					push(@lcstime, $t_diff);
+					push(@lcstime,   $t_diff);
 					push(@laogbias1, $ain1);
 					push(@laogbias2, $ain2);
 					push(@laogbias3, $ain3);
@@ -288,22 +298,19 @@ for($i = 0; $i < $ocnt; $i++){
 		next OUTER;
 	}
 
-	@xbin = @cstime;
-	$xmin = -$range;
-	$xmax = $range;
-	$tot  = $ccnt;
-	$xdiff = $xmax - $xmin;
-	$xside = $xmin - 0.20 * $xdiff;
+	@xbin   = @cstime;
+	$xmin   = -$range;
+	$xmax   = $range;
+	$tot    = $ccnt;
+	$xdiff  = $xmax - $xmin;
+	$xside  = $xmin - 0.20 * $xdiff;
 
-	@lxbin = @lcstime;
+	@lxbin  = @lcstime;
 	$lxdiff = $lzs2 - $lzs1;
-#
-#--- 	I do not know why, but I need to stop one before the last data point to get
-#---    a right answer...
-#
-	$ltot  = $lccnt - 1;
-	$lymin = -10;
-	$lymax =  10;
+
+	$ltot   = $lccnt - 1;
+	$lymin  = -10;
+	$lymax  =  10;
 
 	$out_name = "$fig_out"."$grat[$i]".'_'."$ind[$i]".'/'."$grat[$i]".'_'."$ind[$i]".'_'."$start[$i]".'.gif';
 	$out_data = "$grat[$i]".'_'."$ind[$i]".'_'."$start[$i]".'_data';
@@ -326,9 +333,9 @@ for($i = 0; $i < $ocnt; $i++){
 #
 #---- roll plot
 #
-	@temp = sort{$a<=>$b} @aogbias1;
-	$ymin = $temp[0];
-	$ymax = $temp[$ccnt -1];
+	@temp  = sort{$a<=>$b} @aogbias1;
+	$ymin  = $temp[0];
+	$ymax  = $temp[$ccnt -1];
 	$ydiff = $ymax - $ymin;
 	@ybin  = @aogbias1;
 	
@@ -350,11 +357,11 @@ for($i = 0; $i < $ocnt; $i++){
 #
 #---- polynomial fitting
 #
-	@x_in = @lcstime;
-	@y_in = @laogbias1;
-	$npts = $lccnt;		# # of data point
-	$nterms = 5;		# we use 5th degree
-	$mode   = 0;		# no errors are used
+	@x_in   = @lcstime;
+	@y_in   = @laogbias1;
+	$npts   = $lccnt;		# of data point
+	$nterms = 5;			# we use 5th degree
+	$mode   = 0;			# no errors are used
 
 	svdfit($npts, $nterms);
 #
@@ -410,9 +417,9 @@ for($i = 0; $i < $ocnt; $i++){
 	pgbox(ABCST,0.0 , 0.0, ABCNSTV, 0.0, 0.0);
 	$y_axis = 'Gryo Drift Rate (Pitch)';
 
-	@x_in = @lcstime;
-	@y_in = @laogbias2;
-	$npts = $lccnt;
+	@x_in   = @lcstime;
+	@y_in   = @laogbias2;
+	$npts   = $lccnt;
 	$nterms = 5;
 	$mode   = 0;
 	svdfit($npts, $nterms);
@@ -435,19 +442,19 @@ for($i = 0; $i < $ocnt; $i++){
 #
 #--- yaw plotting
 #
-	@temp = sort{$a<=>$b} @aogbias3;
-	$ymin = $temp[0];
-	$ymax = $temp[$ccnt -1];
+	@temp  = sort{$a<=>$b} @aogbias3;
+	$ymin  = $temp[0];
+	$ymax  = $temp[$ccnt -1];
 	$ydiff = $ymax - $ymin;
 	@ybin  = @aogbias3;
 	
 	if($ydiff == 0){
-		$ms  = abs (0.005 * $ymin);
+		$ms    = abs (0.005 * $ymin);
 		$ymax += $ms;
 		$ymin -= $ms;
 	}else{
-		$ymax  += 0.1 * $ydiff;
-		$ymin  -= 0.1 * $ydiff;
+		$ymax += 0.1 * $ydiff;
+		$ymin -= 0.1 * $ydiff;
 	}
 	$ydiff = $ymax - $ymin;
 	$ymid  = $ymin + 0.5 * $ydiff;
@@ -457,9 +464,9 @@ for($i = 0; $i < $ocnt; $i++){
 	pgbox(ABCNST,0.0 , 0.0, ABCNSTV, 0.0, 0.0);
 	$y_axis = 'Gryo Drift Rate (Yaw)';
 
-	@x_in = @lcstime;
-	@y_in = @laogbias3;
-	$npts = $lccnt;
+	@x_in   = @lcstime;
+	@y_in   = @laogbias3;
+	$npts   = $lccnt;
 	$nterms = 5;
 	$mode   = 0;
 	svdfit($npts, $nterms);
@@ -489,7 +496,7 @@ for($i = 0; $i < $ocnt; $i++){
 #--- convert a ps file into a gif file
 #
 
-	system("echo ''|/opt/local/bin/gs -sDEVICE=ppmraw  -r256x256 -q -NOPAUSE -sOutputFile=-  ./pgplot.ps|/data/mta/MTA/bin/pnmcrop| /data/mta/MTA/bin/pnmflip -r270 |/data/mta/MTA/bin/ppmtogif > $out_name");
+	system("echo ''|$op_dir/gs -sDEVICE=ppmraw  -r256x256 -q -NOPAUSE -sOutputFile=-  ./pgplot.ps|$op_dir/pnmcrop| $op_dir/pnmflip -r270 |$op_dir/ppmtogif > $out_name");
 	
 	if($ts_cnt > $ccnt){
 		print "end of the tsc data\n";

@@ -7,44 +7,44 @@
 #												#
 #	author:	t. isobe (tisobe@cfa.harvard.edu)						#
 #												#
-#	last update: 04/26/2006									#
+#	last update: Mar 11, 2013								#
 #												#
 #################################################################################################
+#
+#--- html 5 conformed Oct 15, 2012
+#
+#
+#--- check whether this is a test case.
+#
+$comp_test = $ARGV[0];
+chomp $comp_test;
 
 #
 #---- read directories
 #
+if($comp_test =~ /test/i){
+	open(FH, "/data/mta/Script/Grating/Gyro/house_keeping/dir_list_test");
+}else{
+	open(FH, "/data/mta/Script/Grating/Gyro/house_keeping/dir_list");
+}
 
-open(FH, './dir_list');
-@dir_list = ();
 while(<FH>){
-        chomp $_;
-        push(@dir_list, $_);
+    chomp $_;
+    @atemp = split(/\s+/, $_);
+    ${$atemp[0]} = $atemp[1];
 }
 close(FH);
-
-$bin_dir    = $dir_list[0];
-$data_dir   = $dir_list[1];
-$web_dir    = $dir_list[2];
-$result_dir = $dir_list[3];
-$fig_out    = $dir_list[4];
-$fig_dir    = $dir_list[5];
-$fits_dir   = $dir_list[6];
-$data_save  = $dir_list[7];
 
 #
 #--- find today's date
 #
-
-($usec, $umin, $uhour, $umday, $umon, $uyear, $uwday, $uyday, $uisdst) = localtime(time);
-$uyear += 1900;
-$month = $umon + 1;
-
-if($month < 10){
-        $month = '0'."$month";
-}
-if($umday < 10){
-        $umday = '0'."$umday";
+if($comp_test =~ /test/i){
+	$uyear      = 2012;
+	$start_year = 2012;
+}else{
+	($usec, $umin, $uhour, $umday, $umon, $uyear, $uwday, $uyday, $uisdst) = localtime(time);
+	$uyear += 1900;
+	$start_year = 2000;
 }
 
 #
@@ -85,41 +85,55 @@ foreach $file (@list){
 #
 	$html_name = "$head".'.html';
 	open(OUT, ">$html_name");
-	print OUT '<html>',"\n";
-	print OUT '<head><title>',"$head",'</title></head>',"\n";
+	print OUT "<!DOCTYPE html>\n";
+	print OUT "<html>\n";
+	print OUT "<head>\n";
+	print OUT "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n";
+	print OUT '<link rel="stylesheet" type="text/css" href="http://asc.harvard.edu/mta/REPORTS/Template/mta.css" /> ',"\n";
+
+	print OUT "<style  type='text/css'>\n";
+	print OUT "table{text-align:center;margin-left:auto;margin-right:auto;border-style:solid;border-spacing:8px;border-width:2px;border-collapse:separate}\n";
+	print OUT "td{text-align:center;padding:8px}\n";
+	print OUT "a:link {color:#00CCFF;}\n";
+	print OUT "a:visited {color:yellow;}\n";
+	print OUT "span.nobr {white-space:nowrap;}\n";
+	print OUT "</style>\n";
+
+	print OUT '<title>',"$head",'</title></head>',"\n";
 	print OUT '<body>',"\n";
 	print OUT '<h2>Changes of ',"$ugyro ",'Gyro Drift Rate around ',"$inst $uind",'</h2>',"\n";
-	print OUT '<br>',"\n";
-	print OUT '<P>',"\n";
+	print OUT '<br />',"\n";
+	print OUT '<p>',"\n";
 	print OUT 'First three plots below show time trend of standard',"\n";
 	print OUT 'deviations of mean variations between observation and ',"\n";
 	print OUT '5th degree polynomial line fitted on the data. The first one ',"\n";
 	print OUT 'is before the grating motion started, the second one ',"\n";
 	print OUT 'is during the motion, and the last one is after the motion completed.',"\n";
 	print OUT 'The standard deviation larger than 5 is dropped from the computation as an outerlayer',"\n";
-	print OUT '</P><P>',"\n";
+	print OUT '</p><p>',"\n";
 	print OUT 'The next three plots are the ratio of the standard ',"\n";
 	print OUT 'deviations used in the first three plots. ',"\n";
 	print OUT 'The first one is before and during, the second one is after ',"\n";
 	print OUT 'and during, and the last one is before and after the ',"\n";
 	print OUT 'grating motion.',"\n";
-	print OUT '</p><p>',"\n";
+	print OUT '</p><p style="padding-bottom:20px">',"\n";
 	print OUT 'A fitted line is computed by robust method. Note that even for the last',"\n";
 	print OUT 'three plots, the line was computed before taking log.',"\n";
 	print OUT 'The values of  slopes are listed in <a href="#table">Table</a>',"\n";
-	print OUT '<br><br>',"\n";
-	print OUT '<img src="',"$gif_file",'"  height=500 width=700>',"\n";
+	print OUT "</p>\n";
 
-	print OUT '<br><br>';
+	print OUT '<img src="',"$gif_file",'" alt="',"$gif_file",'"  style="height:500px;width:700px">',"\n";
+
+	print OUT "<p style='padding-bottom:20px;padding-top:20px'>\n";
 	print OUT 'The next table shows the means and standard deviations of the ',"\n";
 	print OUT 'original standard deviations, null probability, and slope of before, during, and after',"\n";
 	print OUT 'the grating movements for the entire period.',"\n";
 	print OUT 'The average and the standard deviation are also computed for each year.';
-	print OUT '<br><br>',"\n";
+	print OUT "</p>\n";
 
-	print OUT '<a name="table"></a>',"\n";
-	print OUT '<table border=1 cellpadding=2 cellspacing=2>',"\n";
-	print OUT '<tr><th rowspan=2>&#160</th>';
+	print OUT '<a id="table"></a>',"\n";
+	print OUT '<table border=1>',"\n";
+	print OUT '<tr><th rowspan=2>&#160;</th>';
 	print OUT '<th colspan=2>Before</th>';
 	print OUT '<th colspan=2>During</th>';
 	print OUT '<th colspan=2>After</th>';
@@ -127,7 +141,7 @@ foreach $file (@list){
 	print OUT '<th colspan=2>After/During</th>';
 	print OUT '<th colspan=2>Before/After</th>';
 	print OUT '</tr>',"\n";
-	print oUT '<tr>',"\n";
+	print OUT '<tr>',"\n";
 	print OUT '<th>Avg</th><th>Std</th>';
 	print OUT '<th>Avg</th><th>Std</th>';
 	print OUT '<th>Avg</th><th>Std</th>';
@@ -143,39 +157,39 @@ foreach $file (@list){
 #--- avg and std for the entire period
 #
 	print OUT '<tr><th>Entire Period</th>',"\n";
-	printf OUT "<td align=center>%3.4f</td><td align=center>%3.4f</td>",$avg1, $std1;
-	printf OUT "<td align=center>%3.4f</td><td align=center>%3.4f</td>",$avg2, $std2;
-	printf OUT "<td align=center>%3.4f</td><td align=center>%3.4f</td>",$avg3, $std3;
-	printf OUT "<td align=center>%3.4f</td><td align=center>%3.4f</td>",$avg4, $std4;
-	printf OUT "<td align=center>%3.4f</td><td align=center>%3.4f</td>",$avg5, $std5;
-	printf OUT "<td align=center>%3.4f</td><td align=center>%3.4f</td>",$avg6, $std6;
+	printf OUT "<td style='text-align:center'>%3.4f</td><td style='text-align:center'>%3.4f</td>",$avg1, $std1;
+	printf OUT "<td style='text-align:center'>%3.4f</td><td style='text-align:center'>%3.4f</td>",$avg2, $std2;
+	printf OUT "<td style='text-align:center'>%3.4f</td><td style='text-align:center'>%3.4f</td>",$avg3, $std3;
+	printf OUT "<td style='text-align:center'>%3.4f</td><td style='text-align:center'>%3.4f</td>",$avg4, $std4;
+	printf OUT "<td style='text-align:center'>%3.4f</td><td style='text-align:center'>%3.4f</td>",$avg5, $std5;
+	printf OUT "<td style='text-align:center'>%3.4f</td><td style='text-align:center'>%3.4f</td>",$avg6, $std6;
 	print OUT "</tr>\n";
 #
 #--- null probability for the entire period
 #
 	print OUT '<tr><th>Null Probability</th>',"\n";
-	printf OUT "<td colspan=2 align=center>%3.1f%</td>",$prob_before;
-	printf OUT "<td colspan=2 align=center>%3.1f%</td>",$prob_during;
-	printf OUT "<td colspan=2 align=center>%3.1f%</td>",$prob_after;
-	printf OUT "<td colspan=2 align=center>%3.1f%</td>",$prob_b_d;
-	printf OUT "<td colspan=2 align=center>%3.1f%</td>",$prob_a_d;
-	printf OUT "<td colspan=2 align=center>%3.1f%</td>",$prob_b_a;
+	printf OUT "<td colspan=2 style='text-align:center'>%3.1f%</td>",$prob_before;
+	printf OUT "<td colspan=2 style='text-align:center'>%3.1f%</td>",$prob_during;
+	printf OUT "<td colspan=2 style='text-align:center'>%3.1f%</td>",$prob_after;
+	printf OUT "<td colspan=2 style='text-align:center'>%3.1f%</td>",$prob_b_d;
+	printf OUT "<td colspan=2 style='text-align:center'>%3.1f%</td>",$prob_a_d;
+	printf OUT "<td colspan=2 style='text-align:center'>%3.1f%</td>",$prob_b_a;
 	print OUT "</tr>\n";
 #
 #--- slope and its error for the entire period
 #
 	print OUT '<tr><th>Slope</th>',"\n";
-	printf OUT "<td colspan=2 align=center>%3.3e</td>",$slope_before;
-	printf OUT "<td colspan=2 align=center>%3.3e</td>",$slope_during;
-	printf OUT "<td colspan=2 align=center>%3.3e</td>",$slope_after;
-	printf OUT "<td colspan=2 align=center>%3.3e</td>",$slope_b_d;
-	printf OUT "<td colspan=2 align=center>%3.3e</td>",$slope_a_d;
-	printf OUT "<td colspan=2 align=center>%3.3e</td>",$slope_b_a;
+	printf OUT "<td colspan=2 style='text-align:center'>%3.3e</td>",$slope_before;
+	printf OUT "<td colspan=2 style='text-align:center'>%3.3e</td>",$slope_during;
+	printf OUT "<td colspan=2 style='text-align:center'>%3.3e</td>",$slope_after;
+	printf OUT "<td colspan=2 style='text-align:center'>%3.3e</td>",$slope_b_d;
+	printf OUT "<td colspan=2 style='text-align:center'>%3.3e</td>",$slope_a_d;
+	printf OUT "<td colspan=2 style='text-align:center'>%3.3e</td>",$slope_b_a;
 	print OUT "</tr>\n";
 
-	print OUT '<tr><td colspan=13>&#160</td></tr>',"\n";
+	print OUT '<tr><td colspan=13>&#160;</td></tr>',"\n";
 
-	print OUT '<tr><th rowspan=2>&#160</th>';
+	print OUT '<tr><th rowspan=2>&#160;</th>';
 	print OUT '<th colspan=2>Before</th>';
 	print OUT '<th colspan=2>During</th>';
 	print OUT '<th colspan=2>After</th>';
@@ -183,7 +197,7 @@ foreach $file (@list){
 	print OUT '<th colspan=2>After/During</th>';
 	print OUT '<th colspan=2>Before/After</th>';
 	print OUT '</tr>',"\n";
-	print oUT '<tr>',"\n";
+	print OUT '<tr>',"\n";
 	print OUT '<th>Avg</th><th>Std</th>';
 	print OUT '<th>Avg</th><th>Std</th>';
 	print OUT '<th>Avg</th><th>Std</th>';
@@ -194,35 +208,37 @@ foreach $file (@list){
 #
 #--- avg and std for each year
 #
-	for($year = 2000; $year <=$uyear; $year++){
+	for($year = $start_year; $year <=$uyear; $year++){
 		print OUT "<tr><th>$year</th>";
 		$name3    = 'avg_'."$year".'_1';
 		$name4    = 'std_'."$year".'_1';
-		printf OUT "<td align=center>%3.4f</td><td align=center>%3.4f</td>",${$name3},${$name4};
+		printf OUT "<td style='text-align:center'>%3.4f</td><td style='text-align:center'>%3.4f</td>",${$name3},${$name4};
 
 		$name3    = 'avg_'."$year".'_2';
 		$name4    = 'std_'."$year".'_2';
-		printf OUT "<td align=center>%3.4f</td><td align=center>%3.4f</td>",${$name3},${$name4};
+		printf OUT "<td style='text-align:center'>%3.4f</td><td style='text-align:center'>%3.4f</td>",${$name3},${$name4};
 
 		$name3    = 'avg_'."$year".'_3';
 		$name4    = 'std_'."$year".'_3';
-		printf OUT "<td align=center>%3.4f</td><td align=center>%3.4f</td>",${$name3},${$name4};
+		printf OUT "<td style='text-align:center'>%3.4f</td><td style='text-align:center'>%3.4f</td>",${$name3},${$name4};
 
 		$name3    = 'avg_'."$year".'_4';
 		$name4    = 'std_'."$year".'_4';
-		printf OUT "<td align=center>%3.4f</td><td align=center>%3.4f</td>",${$name3},${$name4};
+		printf OUT "<td style='text-align:center'>%3.4f</td><td style='text-align:center'>%3.4f</td>",${$name3},${$name4};
 
 		$name3    = 'avg_'."$year".'_5';
 		$name4    = 'std_'."$year".'_5';
-		printf OUT "<td align=center>%3.4f</td><td align=center>%3.4f</td>",${$name3},${$name4};
+		printf OUT "<td style='text-align:center'>%3.4f</td><td style='text-align:center'>%3.4f</td>",${$name3},${$name4};
 
 		$name3    = 'avg_'."$year".'_6';
 		$name4    = 'std_'."$year".'_6';
-		printf OUT "<td align=center>%3.4f</td><td align=center>%3.4f</td>",${$name3},${$name4};
+		printf OUT "<td style='text-align:center'>%3.4f</td><td style='text-align:center'>%3.4f</td>",${$name3},${$name4};
 
 		print OUT '</tr>',"\n";
 	}
 	print OUT '</table>',"\n";
+	print OUT "</body>\n";
+	print OUT "</html>\n";
 
 	close(OUT);
 }
@@ -297,7 +313,7 @@ sub find_avg {
 #
 #--- initialization for each year similar to the above
 #
-	for($year = 2000; $year <= $uyear; $year++){
+	for($year = $start_year; $year <= $uyear; $year++){
 		$name     = 'sum_'."$year".'_1';
 		$name2    = 'sum_'."$year".'_12';
 		${$name}  = 0;
@@ -444,7 +460,7 @@ sub find_avg {
 	$avg6 = $sum6/$acnt;
 	$std6 = sqrt($sum62/$acnt - $avg6 * $avg6);
 
-	for($year = 2000; $year <= $uyear; $year++){
+	for($year = $start_year; $year <= $uyear; $year++){
 		$cname    = 'cnt_'."$year";
 
 		$name     = 'sum_'."$year".'_1';

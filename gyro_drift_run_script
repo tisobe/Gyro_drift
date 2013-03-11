@@ -1,3 +1,6 @@
+setenv HEADAS /soft/lheasoft/headas/x86_64-pc-linux;
+source $HEADAS/headas-init.csh
+
 source /home/mta/.ascrc
 
 rm -rf param
@@ -6,32 +9,32 @@ source /home/mta/bin/reset_param
 setenv PFILES "${PDIRS}"
 set path = (/home/ascds/DS.release/bin/  $path)
 
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_detail.perl
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_detail.perl
 
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_roll HETG INSR
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_roll HETG RETR
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_roll LETG INSR
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_roll LETG RETR
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_roll HETG INSR
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_roll HETG RETR
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_roll LETG INSR
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_roll LETG RETR
 
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_pitch HETG INSR
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_pitch HETG RETR
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_pitch LETG INSR
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_pitch LETG RETR
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_pitch HETG INSR
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_pitch HETG RETR
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_pitch LETG INSR
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_pitch LETG RETR
 
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw HETG INSR
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw HETG RETR
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw LETG INSR
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw LETG RETR
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw HETG INSR
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw HETG RETR
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw LETG INSR
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_sigma_plot.perl gyro_drift_hist_yaw LETG RETR
 
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_prep_data_html.perl
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_prep_data_html.perl
 
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_print_gyro_html.perl
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_print_gyro_html.perl
 
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_create_fig_html.perl HETG INSR
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_create_fig_html.perl HETG RETR
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_create_fig_html.perl HETG INSR
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_create_fig_html.perl HETG RETR
 
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_create_fig_html.perl LETG INSR
-/opt/local/bin/perl /data/mta/MTA/bin/gyro_drift_create_fig_html.perl LETG RETR
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_create_fig_html.perl LETG INSR
+/usr/bin/perl /data/mta/MTA/bin/gyro_drift_create_fig_html.perl LETG RETR
 
 rm HETG_INSR HETG_RETR LETG_INSR LETG_RETR slope*
 rm *fits zlist
