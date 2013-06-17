@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env /usr/local/bin/perl
 use PGPLOT;
 
 #########################################################################################
@@ -7,7 +7,7 @@ use PGPLOT;
 #											#
 #	author: t. isobe (tisobe@cfa.harvard.edu)					#
 #											#
-#	last update: Mar 11, 2013							#
+#	last update: Jun 05, 2013							#
 #											#
 #########################################################################################
 #
@@ -232,7 +232,7 @@ for($i = 0; $i < $ocnt; $i++){
         close(OUT);
 
         system("echo $hakama |arc4gl -U$dare -Sarcocc -iinput_line");
-	system("rm input_line");
+	system("rm -rf input_line");
         system("gzip -d *gz");
         system("ls pcadf*eng0.fits > zlist");
         @data_list = ();
@@ -496,13 +496,13 @@ for($i = 0; $i < $ocnt; $i++){
 #--- convert a ps file into a gif file
 #
 
-	system("echo ''|$op_dir/gs -sDEVICE=ppmraw  -r256x256 -q -NOPAUSE -sOutputFile=-  ./pgplot.ps|$op_dir/pnmcrop| $op_dir/pnmflip -r270 |$op_dir/ppmtogif > $out_name");
+	system("echo ''|gs -sDEVICE=ppmraw  -r256x256 -q -NOPAUSE -sOutputFile=-  ./pgplot.ps|pnmflip -r270 |ppmtogif > $out_name");
 	
 	if($ts_cnt > $ccnt){
 		print "end of the tsc data\n";
 		exit 1;
 	}
-	system("rm *fits");
+	system("rm -rf *fits");
 }
 
 ##################################################################

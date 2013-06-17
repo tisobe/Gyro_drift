@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env /usr/local/bin/perl
 
 #################################################################################################
 #												#
@@ -7,7 +7,7 @@
 #												#
 #	author:	t. isobe (tisobe@cfa.harvard.edu)						#
 #												#
-#	last update: Mar 11, 2013								#
+#	last update: Jun 05, 2013								#
 #												#
 #################################################################################################
 #
@@ -89,7 +89,7 @@ foreach $file (@list){
 	print OUT "<html>\n";
 	print OUT "<head>\n";
 	print OUT "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n";
-	print OUT '<link rel="stylesheet" type="text/css" href="http://asc.harvard.edu/mta/REPORTS/Template/mta.css" /> ',"\n";
+	print OUT '<link rel="stylesheet" type="text/css" href="https://cxc.cfa.harvard.edu/mta/REPORTS/Template/mta.css" /> ',"\n";
 
 	print OUT "<style  type='text/css'>\n";
 	print OUT "table{text-align:center;margin-left:auto;margin-right:auto;border-style:solid;border-spacing:8px;border-width:2px;border-collapse:separate}\n";

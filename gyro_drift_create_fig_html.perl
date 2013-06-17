@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env /usr/local/bin/perl
 
 #########################################################################################
 #											#
@@ -7,7 +7,7 @@
 #											#
 #	author: t. isobe (tisobe@cfa.harvard.edu)					#
 #											#
-#	last update:	Mar 11, 2013							#
+#	last update:	Ju  05, 2013							#
 #											#
 # 	usage: perl  gyro_drift_create_fig_html.perl HETG INSR				#
 #											#
@@ -123,7 +123,7 @@ print OUT2 "<!DOCTYPE html>\n";
 print OUT2 '<html>',"\n";
 print OUT2 "<head>\n";
 print OUT2 "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n";
-print OUT2 '<link rel="stylesheet" type="text/css" href="http://asc.harvard.edu/mta/REPORTS/Template/mta.css" />',"\n";
+print OUT2 '<link rel="stylesheet" type="text/css" href="https://cxc.cfa.harvard.edu/mta/REPORTS/Template/mta.css" />',"\n";
 
 print OUT2 "<style  type='text/css'>\n";
 print OUT2 "table{text-align:center;margin-left:auto;margin-right:auto;border-style:solid;border-spacing:8px;border-width:2px;border-collapse:separate}\n";
@@ -174,7 +174,7 @@ foreach $ent (@list){
 	@btemp = split(/www/, $atemp[0]);
 	$name2 = $btemp[1];
 	$html_name  = "$name".'.html';
-	$html_name2 = 'http://cxc.harvard.edu/mta_days/'."$name2".'.html';
+	$html_name2 = 'https://cxc.cfa.harvard.edu/mta_days/'."$name2".'.html';
 
 	if($ent =~ /\//){
 		@btemp = split(/\//, $ent);
@@ -198,7 +198,7 @@ foreach $ent (@list){
 	print OUT '<html>',"\n";
 	print OUT "<head>\n";
 	print OUT "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n";
-	print OUT '<link rel="stylesheet" type="text/css" href="http://asc.harvard.edu/mta/REPORTS/Template/mta.css" />', "\n";
+	print OUT '<link rel="stylesheet" type="text/css" href="https://cxc.cfa.harvard.edu/mta/REPORTS/Template/mta.css" />', "\n";
 
 	print OUT "<style  type='text/css'>\n";
 	print OUT "table{text-align:center;margin-left:auto;margin-right:auto;border-style:solid;border-spacing:8px;border-width:2px;border-collapse:separate}\n";

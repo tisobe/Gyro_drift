@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env /usr/local/bin/perl
 use PGPLOT;
 
 #################################################################################
@@ -8,7 +8,7 @@ use PGPLOT;
 #										#
 #	author: t. isobe (tisobe@cfa.harvard.edu)				#
 #										#
-#	last update:	Mar 11, 2013						#
+#	last update:	Jun 05, 2013						#
 #										#
 #---usage: perl plot_gyro_sigma.perl  gyro_drift_hist_before HETG INSR		#
 #										#
@@ -64,7 +64,7 @@ if($file =~ /yaw/){
 	$move = 'yaw';
 }
 $slope_file = 'slope_'."$inst".'_'."$ind".'_'."$move";;
-system("rm $slope_file");
+system("rm -rf $slope_file");
 
 open(FH, "$result_dir/$file");
 
@@ -379,9 +379,9 @@ $pind  = lc($ind);
 
 $out_name = "$file".'_'."$pinst".'_'."$pind".'.gif';
 
-system("echo ''|$op_dir/gs -sDEVICE=ppmraw  -r256x256 -q -NOPAUSE -sOutputFile=-  ./pgplot.ps|$op_dir/pnmcrop| $op_dir/pnmflip -r270 |$op_dir/ppmtogif > $fig_dir/$out_name");
+system("echo ''|gs -sDEVICE=ppmraw  -r256x256 -q -NOPAUSE -sOutputFile=-  ./pgplot.ps|pnmflip -r270 |ppmtogif > $fig_dir/$out_name");
 
-system("rm pgplot.ps");
+system("rm -rf pgplot.ps");
 
 ########################################################
 ### plot_fig: plotting data points on a fig          ###
