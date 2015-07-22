@@ -7,7 +7,7 @@ use PGPLOT;
 #											#
 #	author: t. isobe (tisobe@cfa.harvard.edu)					#
 #											#
-#	last update: Jun 05, 2013							#
+#	last update: Jul 28, 2014							#
 #											#
 #########################################################################################
 #
@@ -232,16 +232,21 @@ for($i = 0; $i < $ocnt; $i++){
         close(OUT);
 
         system("echo $hakama |arc4gl -U$dare -Sarcocc -iinput_line");
-	system("rm -rf input_line");
+	    system("rm -rf input_line");
         system("gzip -d *gz");
-        system("ls pcadf*eng0.fits > zlist");
-        @data_list = ();
+
+        system("ls * > zlist");
         open(FH, "./zlist");
+        @data_list = ();
         while(<FH>){
                 chomp $_;
-                push(@data_list, $_);
+                if($_ =~ /pcadf/ && $_ =~ /eng0.fits/){
+                    push(@data_list, $_);
+                }
         }
         close(FH);
+
+        system("rm zlist");
 
 	@cstime   = ();
 	@aogbias1 = ();			# gyro drift rate roll
